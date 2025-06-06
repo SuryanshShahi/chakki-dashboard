@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --brand-50: #ebf9ff;
+  --brand-200: #a3e2ff;
+  --brand-300: #6bd0ff;
+  --brand-400: #1ab6ff;
+  --brand-500: #0094d9;
+  --brand-600: #0084c2;
+  --brand-700: #0076ad;
+  --brand-800: #005e8a;
+  --brand-900: #004261;
+  --brand-950: #00344d;
+}
+body * {
+  font-family: var(--font-inter);
+  outline: none;
+}
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+@layer base {
+  h1 {
+    @apply text-7xl font-bold;
+  }
+  h2 {
+    @apply text-6xl font-bold;
+  }
+  h3 {
+    @apply text-5xl font-bold;
+  }
+  h4 {
+    @apply text-4xl font-bold;
+  }
+  h5 {
+    @apply text-3xl font-bold;
+  }
+  h6 {
+    @apply text-2xl font-bold;
+  }
+}
