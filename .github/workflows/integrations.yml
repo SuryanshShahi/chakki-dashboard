@@ -3,7 +3,10 @@ on:
   push:
     branches:
       - main
-
+permissions:
+  contents: read
+  pages: write
+  id-token: write 
 jobs:
   build-project:
     name: Build Project
@@ -11,9 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: install dependencies
+      - name: Install dependencies
         run: npm install
-      - name: build project
+      - name: Build project
         run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
