@@ -6,5 +6,5 @@ export const localStorageKeys = {
 
 export enum Status {
   PENDING = "pending",
-  APPROVED = "pending",
+  APPROVED = "approved",
 }
