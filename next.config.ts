@@ -5,8 +5,8 @@ const nextConfig = {
 
   // These are crucial for GitHub Pages
   basePath: process.env.NODE_ENV === "production" ? "/chakki-dashboard" : "",
-  assetPrefix:
-    process.env.NODE_ENV === "production" ? "/chakki-dashboard/" : "",
+  // assetPrefix:
+  //   process.env.NODE_ENV === "production" ? "/chakki-dashboard/" : "",
 
   // Optional: If you're using next/image, you might need this for static export
   images: {
