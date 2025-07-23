@@ -1,7 +1,8 @@
+import LoginViaEmail from "@/app/features/auth/loginViaEmail";
 import React from "react";
 
 const Login = () => {
-  return <div>haha</div>;
+  return <LoginViaEmail />;
 };
 
 export default Login;
