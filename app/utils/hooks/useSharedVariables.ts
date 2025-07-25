@@ -4,12 +4,14 @@ import { localStorageKeys } from "../enum";
 
 export default function useSharedVariables() {
   const searchParams = useSearchParams();
-  const deviceId =
+  const registeredDeviceId =
     getLocalItem<string>(localStorageKeys.REGISTERED_DEVICE_ID) || "";
+  const deviceId = getLocalItem<string>(localStorageKeys.DEVICE_ID) || "";
   const queryParams = Object.fromEntries(searchParams.entries());
 
   return {
     queryParams,
+    registeredDeviceId,
     deviceId,
   };
 }
