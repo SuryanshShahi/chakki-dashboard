@@ -32,7 +32,7 @@ export const getRefreshAccessToken = async (
   identityId: string
 ) => {
   const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_AUTH_API_URL}${API_CONSTANTS.refreshToken}`,
+    `${process.env.NEXT_PUBLIC_API_URL}${API_CONSTANTS.refreshToken}`,
     {
       deviceIdentifier: deviceId,
       refreshToken: getRefreshToken(),

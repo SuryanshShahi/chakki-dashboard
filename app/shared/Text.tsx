@@ -1,22 +1,22 @@
-import { ComponentProps, ReactNode } from "react";
-import clsx from "clsx";
+import { ComponentProps, ReactNode } from 'react';
+import clsx from 'clsx';
 
-export interface TextProps extends ComponentProps<"p"> {
+export interface TextProps extends ComponentProps<'p'> {
   children?: ReactNode;
   className?: string;
   as?: React.ElementType;
-  size?: "3xl" | "2xl" | "xl" | "lg" | "base" | "sm" | "xs";
-  type?: "normal" | "medium" | "semibold" | "bold";
+  size?: '3xl' | '2xl' | 'xl' | 'lg' | 'base' | 'sm' | 'xs';
+  type?: 'normal' | 'medium' | 'semibold' | 'bold' | 'light';
   variant?: string;
 }
 
 const Text = ({
   children,
   className,
-  as: Component = "p",
-  size = "base",
-  variant = "primary",
-  type = "normal",
+  as: Component = 'p',
+  size = 'base',
+  variant = 'primary',
+  type = 'normal',
   ...props
 }: TextProps) => {
   return (

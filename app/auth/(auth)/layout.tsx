@@ -7,18 +7,20 @@ import { SvgStar } from '../../svgs';
 
 function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <div className='grid lg:grid-cols-2 h-screen max-[1024px]:place-items-center'>
-      <div className='flex flex-col gap-y-8 justify-between sm:p-8 p-5 h-full w-full'>
-        <Img
-          src='/images/logo.png'
-          height={40}
-          width={70}
-          alt='logo'
-          isLocal
-          className='h-[40px] object-contain'
-        />
-        {children}
-        <div className='flex justify-between mt-auto items-center'>
+    <div className='grid lg:grid-cols-2 h-screen place-items-center'>
+      <div className='flex flex-col gap-y-8 sm:p-8 p-5 w-full h-full'>
+        <div className='flex flex-col items-center mt-auto'>
+          <Img
+            src='/images/logo.png'
+            height={40}
+            width={70}
+            alt='logo'
+            isLocal
+            className='h-[40px] object-contain mb-4'
+          />
+          {children}
+        </div>
+        <div className='flex justify-between items-center mt-auto'>
           <Text variant='tertiary' size='sm'>
             © 2025 Chakkiwala
           </Text>
@@ -30,7 +32,7 @@ function RootLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </div>
-      <div className='lg:block'>
+      <div className='lg:block hidden'>
         <Fragment>
           <div
             className='gap-y-8 relative px-16 pb-10 flex flex-col bg-cover bg-center h-screen w-full bg-blue-50 bg-no-repeat'
@@ -54,7 +56,8 @@ function RootLayout({ children }: { children: ReactNode }) {
                 type='medium'
                 className='leading-[30px]'
               >
-                Asia's first online platform for representing your local chakkis
+                Asia's first online platform for bringing your local chakkis at
+                your doorstep
               </Text>
             </div>
           </div>

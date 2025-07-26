@@ -45,3 +45,9 @@ body * {
     @apply text-2xl font-bold;
   }
 }
+.modalLogo {
+  backdrop-filter: blur(2px);
+  background-color: rgba(235, 235, 235, 0.6);
+  border-radius: 10px;
+  opacity: 1;
+}
