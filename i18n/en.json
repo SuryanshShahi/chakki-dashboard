@@ -1,4 +1,12 @@
 {
   "email": "Email",
-  "enter_your_email": "Enter your email"
+  "enter_your_email": "Enter your email",
+  "name": "Name",
+  "enter_chakki_name": "Enter Chakki Name",
+  "code": "Code",
+  "enter_chakki_code": "Enter Chakki Code",
+  "min_order_value": "Minimum Order Value",
+  "enter_min_order_value": "Enter Minimum Order Value",
+  "delivery_range": "Delivery range",
+  "enter_delivery_range": "Enter Delivery range"
 }

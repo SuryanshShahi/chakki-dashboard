@@ -1,9 +1,13 @@
-import { requestOtp } from '@/app/apis/apis';
+import { requestOtp, verifyOtp } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
+import { setCookie } from '@/app/utils/cookies';
 import useSharedVariables from '@/app/utils/hooks/useSharedVariables';
 import { loginWithEmailSchema } from '@/app/utils/schemas';
 import { useMutation } from '@tanstack/react-query';
 import { useFormik } from 'formik';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { IVerifyOtp } from '../types';
 
 const initialValues = {
   email: '',
@@ -12,7 +16,8 @@ const initialValues = {
 };
 
 const useHook = () => {
-  const { registeredDeviceId } = useSharedVariables();
+  const { registeredDeviceId, queryParams } = useSharedVariables();
+  const router = useRouter();
   const formikProps = useFormik({
     initialValues,
     validateOnMount: true,
@@ -26,11 +31,12 @@ const useHook = () => {
       });
     },
   });
+  const { values, errors, setFieldValue, setFieldError } = formikProps;
 
   const { mutate: sendOtp, isPending } = useMutation({
     mutationFn: requestOtp,
     onSuccess: (data) => {
-      formikProps.setFieldValue('otpId', data?.id);
+      setFieldValue('otpId', data?.id);
       showToast({
         title: 'OTP sent successfully',
         type: 'success',
@@ -44,12 +50,49 @@ const useHook = () => {
     },
   });
 
-  const isBtnDisabled = Boolean(Object.values(formikProps.errors).length);
+  const { mutate: loginRequest } = useMutation({
+    mutationFn: (data: IVerifyOtp) => verifyOtp(data),
+    onSuccess: (res) => {
+      setCookie(
+        'token',
+        JSON.stringify({
+          accessToken: res?.accessToken,
+          refreshToken: res?.refreshToken,
+        })
+      );
+      router.push('/home');
+    },
+    onError: (err: any) => {
+      setFieldError('otp', err?.response?.data?.response?.message as string);
+    },
+    onSettled: () => {
+      formikProps.setSubmitting(false);
+    },
+  });
+  const handleLogin = () => {
+    if (values?.otp?.length === 6 && values?.otpId) {
+      const payload = {
+        otpId: values?.otpId,
+        otp: values?.otp,
+        mode: 'email',
+      };
+      loginRequest(payload);
+    } else {
+      setFieldError('otp', '');
+    }
+  };
+
+  useEffect(() => {
+    handleLogin();
+  }, [values?.otp, values?.otpId]);
+
+  const isBtnDisabled = Boolean(Object.values(errors).length);
 
   return {
     sendOtp,
     isPending,
     isBtnDisabled,
+    registeredDeviceId,
     ...formikProps,
   };
 };

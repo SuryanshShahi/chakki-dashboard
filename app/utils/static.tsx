@@ -1,4 +1,10 @@
+import { tw } from '@/tailwind.config';
 import { ReactNode } from 'react';
+import { FaArrowLeft } from 'react-icons/fa6';
+import { LuShare2 } from 'react-icons/lu';
+import { TbDotsVertical } from 'react-icons/tb';
+import Img from '../shared/Img';
+import { SvgEdit, SvgTrash } from './svgs';
 
 interface IDrawerItem {
   title: string;
@@ -18,9 +24,9 @@ export const drawerMenuItems = (modules?: string[]): IDrawerItem[] => {
       isVisible: true,
     },
     {
-      title: 'Products',
+      title: 'Chakkis',
       icon: () => <></>,
-      slug: 'products',
+      slug: 'chakkis',
       disabled: false,
       isVisible: true,
     },
@@ -66,4 +72,67 @@ export const Regex = {
   AT_LEAST_ONE_NUMBER: /^(?=.*\d)/,
   AT_LEAST_ONE_SPECIAL_CHAR: /^(?=.*[#?!@$%^&*-]).*$/,
   ALPHANUMERIC: /^[a-zA-Z0-9]+$/,
+};
+
+export const getActionBtn = (action: 'delete' | 'edit' | 'menu' | 'share') => {
+  switch (action) {
+    case 'delete':
+      return (
+        <SvgTrash
+          height={20}
+          width={20}
+          stroke={tw.textColor['error-primary']}
+          className='cursor-pointer'
+          role='button'
+          tabIndex={0}
+          onKeyDown={() => {}}
+        />
+      );
+    case 'edit':
+      return (
+        <SvgEdit
+          height={20}
+          width={20}
+          stroke={tw.textColor['brand-primary']}
+          className='cursor-pointer'
+          role='button'
+          tabIndex={0}
+          onKeyDown={() => {}}
+        />
+      );
+    case 'share':
+      return <LuShare2 size={20} className='text-brand-primary' />;
+    case 'menu':
+      return (
+        <TbDotsVertical
+          className='cursor-pointer text-quaternary'
+          size={20}
+          role='button'
+          onKeyDown={() => {}}
+          tabIndex={0}
+        />
+      );
+
+    default:
+      break;
+  }
+};
+
+export const emptyState = {
+  title: 'No Data found',
+  subtitle:
+    'Your search “Landing page design” did not match any projects. Please try again.',
+  icon: (
+    <Img
+      height={118}
+      width={152}
+      alt=''
+      isLocal
+      src='/images/icons/emptyState.png'
+    />
+  ),
+  btnProps: {
+    btnName: 'Go Back',
+    icon: <FaArrowLeft size={16} className='text-white' />,
+  },
 };

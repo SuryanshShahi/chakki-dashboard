@@ -1,0 +1,286 @@
+'use client';
+import PageWrapper from '@/app/components/pageWrapper/PageWrapper';
+import Chip from '@/app/shared/Chip';
+import Divider from '@/app/shared/Divider';
+import Text from '@/app/shared/Text';
+import Button from '@/app/shared/buttons/Button';
+import DropdownField from '@/app/shared/dropdown';
+import Dropzone from '@/app/shared/dropzone';
+import Heading from '@/app/shared/heading/Heading';
+import InputField from '@/app/shared/inputField';
+import LabelWithError from '@/app/shared/labelWithError';
+import Radio from '@/app/shared/radio';
+import { FileTypes } from '@/app/utils/enum';
+import { localize } from '@/i18n/dictionaries';
+import { IoIosAddCircleOutline } from 'react-icons/io';
+import { IAddChakki } from '../types';
+import { useHook } from './useHook';
+
+export function AddChakki() {
+  const { formikProps, merchantList } = useHook();
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    setFieldValue,
+    handleSubmit,
+  } = formikProps;
+  const merchantDropdownOptions =
+    merchantList?.data?.map((m) => ({
+      label: (
+        <div>
+          <p>{m.name}</p>
+          <p>{m.phone}</p>
+        </div>
+      ),
+      value: m.id,
+    })) || [];
+
+  console.log({ values });
+
+  return (
+    <PageWrapper breadCrumbs={[{ label: 'Chakkis' }, { label: 'Add' }]}>
+      <div className='space-y-6'>
+        <Heading variant='h1' className='!text-3xl'>
+          Add Chakki
+        </Heading>
+        <Divider variant='secondary' />
+        <div className='border border-secondary rounded-xl bg-white p-6 gap-y-4 grid grid-cols-2 gap-x-4'>
+          <InputField
+            required
+            label={localize('name')}
+            placeholder={localize('enter_chakki_name')}
+            onChange={handleChange('name')}
+            onBlur={handleBlur('name')}
+            value={values?.name}
+            errorMessage={errors?.name && touched?.name ? errors?.name : ''}
+            type='text'
+            wrapperClass='border p-2 rounded'
+          />
+          <InputField
+            required
+            prefix='#'
+            label={localize('code')}
+            placeholder={localize('enter_chakki_code')}
+            onChange={handleChange('code')}
+            onBlur={handleBlur('code')}
+            value={values?.code}
+            errorMessage={errors?.code && touched?.code ? errors?.code : ''}
+            type='text'
+            wrapperClass='border p-2 rounded'
+          />
+          <DropdownField
+            name='merchant'
+            options={merchantDropdownOptions}
+            placeholder='Select or create merchant'
+            isMulti={false}
+            {...formikProps}
+          />
+          <div className='col-span-2'>
+            <Text>Does the Chakki take Customer Requests</Text>
+            <div className='flex gap-2'>
+              <Radio
+                name='isCustomerRequestAvailable'
+                label='Yes'
+                isChecked={values.isCustomerRequestAvailable}
+                {...formikProps}
+                handleChange={(e) => {
+                  setFieldValue('isCustomerRequestAvailable', true);
+                }}
+              />
+              <Radio
+                name='isCustomerRequestAvailable'
+                label='No'
+                isChecked={!values.isCustomerRequestAvailable}
+                {...formikProps}
+                handleChange={(e) => {
+                  setFieldValue('isCustomerRequestAvailable', false);
+                }}
+              />
+            </div>
+          </div>
+          <InputField
+            label={localize('min_order_value')}
+            placeholder={localize('enter_min_order_value')}
+            onChange={handleChange('minOrderAmount')}
+            onBlur={handleBlur('minOrderAmount')}
+            value={values?.minOrderAmount}
+            errorMessage={
+              errors?.minOrderAmount && touched?.minOrderAmount
+                ? errors?.minOrderAmount
+                : ''
+            }
+            type='number'
+            wrapperClass='border p-2 rounded'
+          />
+          <InputField
+            label={localize('delivery_range')}
+            placeholder={localize('enter_delivery_range')}
+            onChange={handleChange('deliveryRangeInKms')}
+            onBlur={handleBlur('deliveryRangeInKms')}
+            value={values?.deliveryRangeInKms}
+            errorMessage={
+              errors?.deliveryRangeInKms && touched?.deliveryRangeInKms
+                ? errors?.deliveryRangeInKms
+                : ''
+            }
+            type='number'
+            wrapperClass='border p-2 rounded'
+          />
+          <div className='space-y-2'>
+            <InputField
+              label={'External store links'}
+              placeholder={'Add external store links (if any)'}
+              onChange={handleChange('link')}
+              onBlur={handleBlur('link')}
+              type='text'
+              errorMessage={
+                errors?.deliveryRangeInKms && touched?.deliveryRangeInKms
+                  ? errors?.deliveryRangeInKms
+                  : ''
+              }
+              value={values.link}
+              wrapperClass='border p-2 rounded w-full'
+              icon={
+                <IoIosAddCircleOutline
+                  size={20}
+                  onClick={() => {
+                    const newExternalLink = [
+                      ...(values.externalStoreLinks || []),
+                      values.link,
+                    ];
+                    setFieldValue('externalStoreLinks', newExternalLink);
+                    setFieldValue('link', '');
+                  }}
+                />
+              }
+            />
+            <div className='flex gap-2 flex-wrap'>
+              {values?.externalStoreLinks?.map((l, index) => (
+                <Chip
+                  key={index}
+                  title={l}
+                  handleRemove={() => {
+                    const newExternalLink = values.externalStoreLinks?.filter(
+                      (_, idx) => idx !== index
+                    );
+                    setFieldValue('externalStoreLinks', newExternalLink);
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          <div className='col-span-2'>
+            <Text>Contact Details of person that helps operate the chakki</Text>
+            <div className='flex gap-2'>
+              <Radio
+                name='showExtraContactInfo'
+                label='Yes'
+                isChecked={values.showExtraContactInfo}
+                {...formikProps}
+                handleChange={(e) => {
+                  setFieldValue('showExtraContactInfo', true);
+                }}
+              />
+              <Radio
+                name='showExtraContactInfo'
+                label='No'
+                isChecked={!values.showExtraContactInfo}
+                {...formikProps}
+                handleChange={(e) => {
+                  setFieldValue('showExtraContactInfo', false);
+                }}
+              />
+            </div>
+          </div>
+          {values?.showExtraContactInfo && (
+            <div className='col-span-2 grid grid-cols-2 gap-4'>
+              <InputField
+                label={'Helper Name'}
+                placeholder={'Any other person that help operates the chakki'}
+                onChange={handleChange('contactDetails.name')}
+                onBlur={handleBlur('contactDetails.name')}
+                value={values?.contactDetails?.name}
+                errorMessage={
+                  (errors?.contactDetails as IAddChakki['contactDetails'])
+                    ?.name &&
+                  (touched?.contactDetails as IAddChakki['contactDetails'])
+                    ?.name
+                    ? (errors?.contactDetails as IAddChakki['contactDetails'])
+                        ?.name
+                    : ''
+                }
+                type='text'
+                wrapperClass='border p-2 rounded'
+              />
+              <InputField
+                label={'Helper Phone'}
+                placeholder={'Any other person that help operates the chakki'}
+                onChange={handleChange('contactDetails.phone')}
+                onBlur={handleBlur('contactDetails.phone')}
+                value={values?.contactDetails?.phone}
+                errorMessage={
+                  (errors?.contactDetails as IAddChakki['contactDetails'])
+                    ?.phone &&
+                  (touched?.contactDetails as IAddChakki['contactDetails'])
+                    ?.phone
+                    ? (errors?.contactDetails as IAddChakki['contactDetails'])
+                        ?.phone
+                    : ''
+                }
+                type='text'
+                wrapperClass='border p-2 rounded'
+              />
+              <InputField
+                label={'Helper Email'}
+                placeholder={'Any other person that help operates the chakki'}
+                onChange={handleChange('contactDetails.email')}
+                onBlur={handleBlur('contactDetails.email')}
+                value={values?.contactDetails?.email}
+                errorMessage={
+                  (errors?.contactDetails as IAddChakki['contactDetails'])
+                    ?.email &&
+                  (touched?.contactDetails as IAddChakki['contactDetails'])
+                    ?.email
+                    ? (errors?.contactDetails as IAddChakki['contactDetails'])
+                        ?.email
+                    : ''
+                }
+                type='text'
+                wrapperClass='border p-2 rounded'
+              />
+            </div>
+          )}
+
+          <LabelWithError
+            name='images'
+            className='w-full'
+            label='Images'
+            errorMessage={errors?.images}
+          >
+            <Dropzone
+              name='images'
+              isFilePreview
+              datatestid='images'
+              allowedFileTypes={[FileTypes.JPEG, FileTypes.PNG]}
+              isMultiple
+              error={!!errors.images}
+              onChange={(files) => {
+                setFieldValue('images', files);
+              }}
+              resolution={{ height: 700, width: 800 }}
+            />
+          </LabelWithError>
+        </div>
+        <Button
+          size='sm'
+          btnName='Submit'
+          onClick={() => handleSubmit()}
+          className='ml-auto'
+        />
+      </div>
+    </PageWrapper>
+  );
+}

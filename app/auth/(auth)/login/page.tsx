@@ -4,7 +4,7 @@ import React from 'react';
 
 const Login = () => {
   return (
-    <PageWrapper hideFooter hideHeader>
+    <PageWrapper hideFooter hideHeader className='w-full'>
       <LoginViaEmail />
     </PageWrapper>
   );

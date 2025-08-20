@@ -1,9 +1,11 @@
-import axios from "axios";
-import { getCookie } from "../utils/cookies";
-import { getLocalItem } from "../utils/localstorage";
-import { API_CONSTANTS } from "./apiConstants";
-import axiosInstance from "./axiosInstance";
-import { IRequestOtp, IVerifyOtp } from "../features/auth/types";
+import axios from 'axios';
+import { UUID } from 'crypto';
+import { IRequestOtp, IVerifyOtp } from '../features/auth/types';
+import { IAddChakki, IUpdateChakki } from '../features/chakkis/types';
+import { getCookie } from '../utils/cookies';
+import { getLocalItem } from '../utils/localstorage';
+import { API_CONSTANTS } from './apiConstants';
+import axiosInstance from './axiosInstance';
 
 const getAccessToken = (key: string) => {
   const accessToken = getLocalItem<{ accessToken: string }>(key)?.accessToken;
@@ -19,7 +21,7 @@ const getAccessToken = (key: string) => {
 };
 
 const getRefreshToken = () => {
-  const refreshToken = getCookie("token")?.refreshToken;
+  const refreshToken = getCookie('token')?.refreshToken;
   return refreshToken;
 };
 /**
@@ -49,7 +51,7 @@ export const registerDevice = async (payload: { identifier: string }) => {
 export const uploadToS3 = async (url: string, data: any, mimeType: string) => {
   const res = await axios.put(url, data, {
     headers: {
-      "Content-Type": mimeType,
+      'Content-Type': mimeType,
     },
   });
   return res?.data?.data;
@@ -66,4 +68,67 @@ export const requestOtp = async (payload: IRequestOtp) => {
 export const verifyOtp = async (payload: IVerifyOtp) => {
   const res = await axiosInstance().post(API_CONSTANTS.verifyOtp, payload);
   return res?.data?.data;
+};
+
+// --------------------------------------------------------------------------------------
+// ---------------------------------------- Chakkis ----------------------------------------
+// --------------------------------------------------------------------------------------
+
+export const getChakkiList = async (
+  filters?: string,
+  page?: number,
+  limit?: number
+) => {
+  const res = await axiosInstance().get(
+    API_CONSTANTS.getChakkiList(filters, page, limit)
+  );
+  return res?.data || {};
+};
+
+export const addChakki = async (body: IAddChakki) => {
+  const res = await axiosInstance().post(API_CONSTANTS.addChakki, body);
+  return res?.data;
+};
+
+export const updateChakki = async (chakkiId: UUID, body: IUpdateChakki) => {
+  const res = await axiosInstance().post(
+    API_CONSTANTS.updateChakki(chakkiId),
+    body
+  );
+  return res?.data;
+};
+
+export const addChakkiImages = async (chakkiId: UUID, formData: any) => {
+  const res = await axiosInstance().post(
+    API_CONSTANTS.addChakkiImage(chakkiId),
+    formData
+  );
+  return res?.data;
+};
+
+export const getChakkiDetails = async (chakkiId: UUID) => {
+  const res = await axiosInstance().get(
+    API_CONSTANTS.getChakkiDetails(chakkiId)
+  );
+  return res?.data;
+};
+
+// --------------------------------------------------------------------------------------
+// ---------------------------------------- Merchants ----------------------------------------
+// --------------------------------------------------------------------------------------
+
+export const getMerchantList = async (
+  filters?: string,
+  page?: number,
+  limit?: number
+) => {
+  const res = await axiosInstance().get(
+    API_CONSTANTS.getChakkiList(filters, page, limit)
+  );
+  return res?.data || {};
+};
+
+export const getActiveMerchantList = async () => {
+  const res = await axiosInstance().get(API_CONSTANTS.getActiveMerchantList);
+  return res?.data;
 };

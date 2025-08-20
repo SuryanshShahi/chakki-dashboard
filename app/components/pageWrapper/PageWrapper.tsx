@@ -11,6 +11,7 @@ interface IPageWraps {
   hideHeader?: boolean;
   hideFooter?: boolean;
   breadCrumbs?: IBreadCrumbs[];
+  className?: string;
 }
 
 const PageWrapper: FC<PropsWithChildren<IPageWraps>> = ({
@@ -19,11 +20,12 @@ const PageWrapper: FC<PropsWithChildren<IPageWraps>> = ({
   hideHeader,
   hideFooter,
   breadCrumbs,
+  className,
 }) => {
   const scroll = useScrollHeight();
 
   return (
-    <main className='h-full'>
+    <main className={clsx('h-full', className)}>
       {!hideHeader && <Header breadCrumbs={breadCrumbs} />}
       <ToastContainer stacked />
       <div

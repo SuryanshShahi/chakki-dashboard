@@ -1,4 +1,4 @@
-import Heading from "@/app/shared/Heading";
+import Heading from "@/app/shared/heading/Heading";
 import Img from "@/app/shared/Img";
 import Text from "@/app/shared/Text";
 import clsx from "clsx";
@@ -42,11 +42,11 @@ const UserCard: FC<PropsWithChildren<IUserCard>> = ({
     return (
       <>
         <div className={clsx("absolute right-0", "top-0")}>
-          {status === Status.PENDING || status === Status.APPROVED ? (
+          {status === Status.DRAFT || status === Status.ACTIVE ? (
             <div
               className={clsx(
                 "h-[14px] w-[14px] border-[1.5px] border-white rounded-full",
-                status === Status.PENDING ? "bg-warning-500" : "bg-green-500"
+                status === Status.DRAFT ? "bg-warning-500" : "bg-green-500"
               )}
             />
           ) : (
@@ -70,7 +70,7 @@ const UserCard: FC<PropsWithChildren<IUserCard>> = ({
             "relative",
             type === "activity" &&
               "h-16 w-16 border-2 rounded-full flex justify-center items-center",
-            status === Status.APPROVED
+            status === Status.ACTIVE
               ? "border-green-500"
               : "border-utility-warning-500",
             imageWrapperClass

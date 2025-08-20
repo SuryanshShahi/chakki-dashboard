@@ -1,8 +1,9 @@
 'use client';
-import Heading from '@/app/shared/Heading';
+import Heading from '@/app/shared/heading/Heading';
 import Text from '@/app/shared/Text';
 import Button from '@/app/shared/buttons/Button';
 import InputField from '@/app/shared/inputField';
+import OtpInputField from '@/app/shared/inputField/OtpInput';
 import { localize } from '@/i18n/dictionaries';
 import clsx from 'clsx';
 import useHook from './useHook';
@@ -10,6 +11,8 @@ import useHook from './useHook';
 const LoginViaEmail = () => {
   const {
     isPending,
+    registeredDeviceId,
+    sendOtp,
     handleSubmit,
     values,
     errors,
@@ -17,9 +20,11 @@ const LoginViaEmail = () => {
     isBtnDisabled,
     handleChange,
     handleBlur,
+    setFieldValue,
   } = useHook();
+
   return (
-    <div className='space-y-4'>
+    <div className='space-y-4 max-w-[55%] mx-auto'>
       <div>
         <Heading as='h5' className={clsx('w-max mx-auto text-2xl')}>
           Sign In
@@ -35,24 +40,29 @@ const LoginViaEmail = () => {
       </div>
       {values.otpId ? (
         <>
-          {/* <OtpInputField
-            otp={watch('otp')}
-            setOtp={(otp) => setValue('otp', otp)}
-            label='Secure Code'
+          <OtpInputField
+            otp={values.otp}
+            setOtp={(otp) => setFieldValue('otp', otp)}
             errorMessage=''
             resend={() => {
-              resendOtp();
-              setValue('otp', '');
+              sendOtp({
+                mode: 'email',
+                identifier: values.email,
+                registeredDeviceId,
+                type: 'admin',
+              });
+              setFieldValue('otp', '');
             }}
           />
           <Button
             btnName='Next'
             variant='primary'
+            type='button'
             fullWidth
-            onClick={handleSubmit(onSubmit)}
             disabled={isBtnDisabled}
-            isLoading={watch('isLoading')}
-          /> */}
+            isLoading={isPending}
+            onClick={() => handleSubmit()}
+          />
         </>
       ) : (
         <div className='space-y-4'>

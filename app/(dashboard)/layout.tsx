@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useContext, useState } from "react";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 import { GlobalContext } from "../contexts";
-import Heading from "../shared/Heading";
+import Heading from "../shared/heading/Heading";
 import Img from "../shared/Img";
 import useWindowDimensions from "../utils/hooks/useWindowDimension";
 
@@ -53,8 +53,8 @@ export default function RootLayout({
                 height={50}
                 width={50}
                 alt=""
-                src="/images/appStore.png"
-                className="h-8 w-12"
+                src="/images/logo.png"
+                className="h-8 w-8"
                 isLocal
               />
               {scrollHeight > 100 && (

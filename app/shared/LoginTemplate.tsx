@@ -1,4 +1,4 @@
-import Heading from '@/app/shared/Heading';
+import Heading from '@/app/shared/heading/Heading';
 import Text from '@/app/shared/Text';
 import { FC, Fragment, PropsWithChildren, ReactNode } from 'react';
 import IconWithBg from './IconWithBg';

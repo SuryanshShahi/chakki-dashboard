@@ -2,6 +2,7 @@
 import clsx from 'clsx';
 import React, {
   InputHTMLAttributes,
+  ReactNode,
   forwardRef,
   useEffect,
   useState,
@@ -10,7 +11,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import { PiWarningCircleFill } from 'react-icons/pi';
 import { SlArrowRight } from 'react-icons/sl';
 
-interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string;
   icon?: React.ReactNode;
   label?: string;
@@ -24,6 +25,7 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
     code: string;
     dial_code: string;
   }) => void;
+  suffix?: ReactNode;
 }
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
@@ -42,6 +44,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       setCountryCode,
       disabled,
       required,
+      suffix,
       ...rest
     } = props;
     const [inputType, setInputType] = useState(type);
