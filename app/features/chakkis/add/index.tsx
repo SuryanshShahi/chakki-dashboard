@@ -2,9 +2,11 @@
 import PageWrapper from '@/app/components/pageWrapper/PageWrapper';
 import Chip from '@/app/shared/Chip';
 import Divider from '@/app/shared/Divider';
+import Loader from '@/app/shared/Loader';
 import Text from '@/app/shared/Text';
 import Button from '@/app/shared/buttons/Button';
-import DropdownField from '@/app/shared/dropdown';
+import { Option } from '@/app/shared/dropdown';
+import AsyncCreatableDropDown from '@/app/shared/dropdown/AsyncCreatableDropDown';
 import Dropzone from '@/app/shared/dropzone';
 import Heading from '@/app/shared/heading/Heading';
 import InputField from '@/app/shared/inputField';
@@ -17,7 +19,12 @@ import { IAddChakki } from '../types';
 import { useHook } from './useHook';
 
 export function AddChakki() {
-  const { formikProps, merchantList } = useHook();
+  const {
+    formikProps,
+    merchantOptions,
+    isLoadingMerchants,
+    loadMerchantOptions,
+  } = useHook();
   const {
     values,
     errors,
@@ -27,21 +34,15 @@ export function AddChakki() {
     setFieldValue,
     handleSubmit,
   } = formikProps;
-  const merchantDropdownOptions =
-    merchantList?.data?.map((m) => ({
-      label: (
-        <div>
-          <p>{m.name}</p>
-          <p>{m.phone}</p>
-        </div>
-      ),
-      value: m.id,
-    })) || [];
 
   console.log({ values });
 
+  if (isLoadingMerchants) return <Loader variant='full-screen' />;
+
   return (
-    <PageWrapper breadCrumbs={[{ label: 'Chakkis' }, { label: 'Add' }]}>
+    <PageWrapper
+      breadCrumbs={[{ label: 'Chakkis', path: '/chakkis' }, { label: 'Add' }]}
+    >
       <div className='space-y-6'>
         <Heading variant='h1' className='!text-3xl'>
           Add Chakki
@@ -71,11 +72,25 @@ export function AddChakki() {
             type='text'
             wrapperClass='border p-2 rounded'
           />
-          <DropdownField
+          <AsyncCreatableDropDown
             name='merchant'
-            options={merchantDropdownOptions}
-            placeholder='Select or create merchant'
+            required
+            wrapperClass='border p-2 rounded'
+            options={merchantOptions}
+            label='Owner'
+            placeholder='Enter Name, Email or Phone'
+            className='w-full cursor-pointer'
+            isLoading={isLoadingMerchants}
+            useInternalState={false}
             isMulti={false}
+            onLoadOptions={loadMerchantOptions}
+            onChangeDropdown={(selected: Option) => {
+              setFieldValue('merchant', selected || null);
+            }}
+            onCreateNew={(key) => {
+              console.log('key');
+            }}
+            value={values.merchant || null}
             {...formikProps}
           />
           <div className='col-span-2'>
@@ -268,6 +283,7 @@ export function AddChakki() {
               isMultiple
               error={!!errors.images}
               onChange={(files) => {
+                if (!files.length) return;
                 setFieldValue('images', files);
               }}
               resolution={{ height: 700, width: 800 }}

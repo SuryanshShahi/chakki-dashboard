@@ -1,9 +1,9 @@
 import useInteractiveStates from '@/app/utils/hooks/interactiveStates';
 import { CheckIcon } from '@/app/utils/svgs';
 import clsx from 'clsx';
-import { useField } from 'formik';
+import { FormikProps } from 'formik';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import Select, {
   ActionMeta,
   OptionProps,
@@ -12,6 +12,8 @@ import Select, {
 } from 'react-select';
 import { OptionCore } from '.';
 import NameInitial from '../nameInitial/NameInitial';
+import { SlArrowRight } from 'react-icons/sl';
+import { PiWarningCircleFill } from 'react-icons/pi';
 
 export interface Option extends OptionCore {
   icon?: React.ReactNode;
@@ -22,7 +24,7 @@ export interface Option extends OptionCore {
   isNewAdded?: boolean;
 }
 
-interface DropdownFieldProps {
+interface DropdownFieldProps extends FormikProps<any> {
   name: string;
   options: Option[];
   placeholder?: string;
@@ -36,6 +38,11 @@ interface DropdownFieldProps {
   isLoading?: boolean;
   onLoadOptions: (searchKey: any) => void;
   onCreateNew?: (name: any) => void;
+  value?: any;
+  label?: string | ReactNode;
+  required?: boolean;
+  wrapperClass?: string;
+  icon?: ReactNode;
 }
 
 const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
@@ -43,7 +50,7 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
   options,
   placeholder,
   isDisabled = false,
-  isMulti = true,
+  isMulti = false,
   useInternalState = true,
   isClearable = false,
   className,
@@ -52,15 +59,19 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
   onCreateNew,
   isLoading,
   dataTestId,
+  value,
+  touched,
+  errors,
+  setFieldValue,
+  setFieldTouched,
+  label,
+  required,
+  wrapperClass,
+  icon,
 }) => {
   const [inputValue, setInputValue] = useState<string>('');
 
-  const { lostFocus, onBlur, onFocus } = useInteractiveStates();
-
-  // ✅ Replace React Hook Form’s useController with Formik’s useField
-  const [field, meta, helpers] = useField<any>(name);
-  const { value } = field;
-  const { setValue, setTouched } = helpers;
+  const { lostFocus } = useInteractiveStates();
 
   const handleInputChange = (val: string) => {
     setInputValue(val);
@@ -77,10 +88,12 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
       if (selectedOption?.value === 'add-new') {
         onCreateNew && onCreateNew(inputValue);
       } else {
-        if (useInternalState)
-          setValue(
+        if (useInternalState) {
+          setFieldValue(
+            name,
             isMulti ? [...(value || []), selectedOption] : selectedOption
           );
+        }
         onChangeDropdown &&
           onChangeDropdown(
             isMulti ? [...(value || []), selectedOption] : selectedOption
@@ -106,9 +119,7 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
             <NameInitial name={props.data?.nameInitial} type='drop_menu_list' />
           ) : props.data?.icon ? (
             <span>{props.data.icon}</span>
-          ) : (
-            <></>
-          )}
+          ) : null}
           <div
             dangerouslySetInnerHTML={{
               __html: (props.data.htmlLabel
@@ -129,46 +140,93 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
   return (
     <div
       className={clsx(
-        'app-select-wrapper min-h-10 min-w-[200px] text-base relative',
-        className
+        'cursor-pointer space-y-1 text-gray-400 relative',
+        wrapperClass
       )}
-      role='presentation'
     >
-      <Select
-        isLoading={isLoading}
-        menuPlacement='auto'
-        maxMenuHeight={220}
+      <div className='text-xs md:text-sm'>
+        {label}
+        {required && <span className='text-xs text-red-600'> *</span>}
+      </div>
+      <div
         className={clsx(
-          'dropdown-container placeholder:text-base placeholder:!text-placeholder capitalize block w-full text-base border border-primary rounded-lg focus-within:outline-none',
-          meta.error
-            ? `${lostFocus ? '!border-error' : '!border-brand'}`
-            : (!lostFocus && '!border-brand') || '',
-          'shadow-none disabled:bg-disabled'
+          'app-select-wrapper min-h-10 min-w-[200px] text-base relative',
+          className
         )}
-        classNamePrefix='app-select'
-        isDisabled={isDisabled}
-        isClearable={isClearable}
-        placeholder={placeholder}
-        options={options}
-        onInputChange={handleInputChange}
-        onChange={(val, action) => {
-          handleChange(val as SingleValue<OptionCore>, action);
-          setTouched(true);
-        }}
-        getOptionLabel={(option) => option.label as string}
-        getOptionValue={(option) => option.value}
-        components={{ DropdownIndicator: null, Option: customOption }}
-        hideSelectedOptions={false}
-        controlShouldRenderValue={!isMulti}
-        inputValue={inputValue}
-        menuIsOpen={inputValue.length > 0}
-        filterOption={() => true} // disable internal filtering
-        id={`${dataTestId}`}
-        name={name}
-        value={value || (isMulti ? [] : null)} // ✅ controlled by Formik
-      />
-      {meta.touched && meta.error && (
-        <span className='text-error text-sm'>{meta.error}</span>
+        role='presentation'
+      >
+        <Select
+          isLoading={isLoading}
+          menuPlacement='auto'
+          maxMenuHeight={220}
+          className={clsx(
+            'dropdown-container placeholder:text-base placeholder:!text-placeholder capitalize block w-full text-base focus-within:outline-none p-0 m-0',
+            !lostFocus && '!border-brand',
+            'shadow-none disabled:bg-disabled'
+          )}
+          classNamePrefix='app-select'
+          isDisabled={isDisabled}
+          isClearable={isClearable}
+          placeholder={placeholder}
+          options={options}
+          onInputChange={handleInputChange}
+          onChange={(val, action) => {
+            handleChange(val as SingleValue<OptionCore>, action);
+            setFieldTouched(name, true);
+          }}
+          styles={{
+            control: (base) => ({
+              ...base,
+              border: 'none',
+              boxShadow: 'none',
+              margin: 0,
+              height: 'max-content',
+            }),
+            option: (base) => ({
+              ...base,
+              color: 'black',
+              background: '#eee',
+            }),
+            container: (base) => ({
+              ...base,
+              padding: 0,
+              margin: 0,
+            }),
+            valueContainer: (base) => ({
+              ...base,
+              padding: 0,
+            }),
+          }}
+          onBlur={() => setFieldTouched(name, true, true)}
+          getOptionLabel={(option) => {
+            return (option.label as string) || '';
+          }}
+          getOptionValue={(option) => {
+            return option.value;
+          }}
+          components={{ DropdownIndicator: null, Option: customOption }}
+          hideSelectedOptions={false}
+          controlShouldRenderValue={!isMulti}
+          inputValue={inputValue}
+          menuIsOpen={undefined}
+          filterOption={() => true}
+          id={`${dataTestId}`}
+          name={name}
+          value={value || (isMulti ? [] : null)}
+        />
+      </div>
+      <div className='absolute right-2 top-[50%] bottom-[50%]'>
+        {icon ? (
+          <SlArrowRight
+            size={14}
+            className={`ml-auto rotate-90 text-gray-400`}
+          />
+        ) : touched?.[name] && errors?.[name] ? (
+          <PiWarningCircleFill className='text-red-600' />
+        ) : null}
+      </div>
+      {touched?.[name] && errors?.[name] && (
+        <span className='text-xs text-red-600'>{errors[name] as string}</span>
       )}
     </div>
   );

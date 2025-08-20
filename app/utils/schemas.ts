@@ -21,7 +21,13 @@ export const addChakkiSchema = () =>
       .required('Code is required')
       .min(1, 'Code must be at least 1 characters long')
       .max(255, 'Code must be less than 255 characters long'),
-    merchant: yup.object().required('Merchant is required'),
+    merchant: yup
+      .object({
+        value: yup.string().required('Merchant is required'),
+        label: yup.string(),
+      })
+      .nullable()
+      .required('Merchant is required'),
     isCustomerRequestAvailable: yup.boolean(),
     minOrderAmount: yup.number(),
     deliveryRangeInKms: yup.number(),

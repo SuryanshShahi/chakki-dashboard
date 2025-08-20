@@ -6,7 +6,7 @@ import {
   updateChakki,
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
-import { IDropdown } from '@/app/shared/dropdown';
+import { IDropdown, Option } from '@/app/shared/dropdown';
 import { addChakkiSchema } from '@/app/utils/schemas';
 import { IUser } from '@/app/utils/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -14,7 +14,9 @@ import { File } from 'buffer';
 import { UUID } from 'crypto';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import { IAddChakki, IChakkiDetails, IUpdateChakki } from '../types';
+import { debounce } from '@/app/utils/constants';
 
 interface IInitialValue extends IAddChakki {
   images?: {
@@ -22,13 +24,14 @@ interface IInitialValue extends IAddChakki {
     url?: string;
     file?: File;
   }[];
-  merchant: IDropdown;
+  merchant: IDropdown | null;
   link?: string;
   showExtraContactInfo?: boolean;
 }
 
 export function useHook(chakkiId?: UUID) {
   const router = useRouter();
+  const [merchantOptions, setMerchantOptions] = useState<Option[]>([]);
 
   const { data: chakki, isLoading: isLoadingChakkis } = useQuery<{
     data: IChakkiDetails;
@@ -40,30 +43,32 @@ export function useHook(chakkiId?: UUID) {
   });
   const chakkiDetails = chakki?.data;
 
-  const { data: merchantList, isLoading: isLoadingMerchants } = useQuery<{
+  const {
+    data: merchantList,
+    isLoading: isLoadingMerchants,
+    refetch: refetchMerchants,
+  } = useQuery<{
     data: IUser[];
   }>({
     queryKey: ['activeMerchantList'],
-    queryFn: () => getActiveMerchantList(),
+    queryFn: () => getActiveMerchantList(1, 10, undefined),
     enabled: !chakkiId,
     refetchOnMount: true,
   });
 
   console.log(merchantList);
 
-  const merchant = merchantList?.data?.find(
-    (m) => m?.id === chakkiDetails?.merchant?.id
-  );
-
   const initialValues: IInitialValue = {
     name: chakkiDetails?.name ?? '',
     code: chakkiDetails?.code ?? '',
     link: '',
     merchantId: chakkiDetails?.merchant?.id ?? undefined,
-    merchant: {
-      label: merchant?.name,
-      value: merchant?.id as string,
-    },
+    merchant: chakkiDetails?.merchant
+      ? {
+          label: chakkiDetails?.merchant?.name,
+          value: chakkiDetails?.merchant?.id as string,
+        }
+      : null,
     isCustomerRequestAvailable:
       chakkiDetails?.isCustomerRequestAvailable ?? false,
     minOrderAmount: chakkiDetails?.minOrderValue,
@@ -80,10 +85,12 @@ export function useHook(chakkiId?: UUID) {
     initialValues,
     validateOnMount: true,
     enableReinitialize: true,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit(values) {
       const payload = {
         ...values,
-        merchantId: values.merchant.value as UUID,
+        merchantId: values.merchant?.value as UUID,
       };
       if (chakkiId) {
         updateChakkiMutation({
@@ -169,6 +176,35 @@ export function useHook(chakkiId?: UUID) {
     },
   });
 
+  const loadMerchantOptions = useMemo(
+    () =>
+      debounce(async (searchKey: string) => {
+        const res = await refetchMerchants();
+        const newOptions = (res?.data?.data || [])?.map((m) => ({
+          label: `${m.name} (${m.phone})`,
+          value: m.id,
+        }));
+
+        setMerchantOptions([
+          ...newOptions,
+          {
+            label: `+ Add "${searchKey}"`,
+            value: 'add-new',
+          },
+        ]);
+      }, 400),
+    [refetchMerchants, setMerchantOptions]
+  );
+
+  useEffect(() => {
+    if (!merchantList?.data?.length) return;
+    const options = merchantList.data.map((m) => ({
+      label: `${m.name} (${m.phone})`,
+      value: m.id,
+    }));
+    setMerchantOptions(options);
+  }, [merchantList]);
+
   const isBtnDisabled = Object.values(errors).length;
 
   return {
@@ -177,5 +213,7 @@ export function useHook(chakkiId?: UUID) {
     isBtnDisabled,
     isLoadingMerchants,
     formikProps,
+    merchantOptions,
+    loadMerchantOptions,
   };
 }

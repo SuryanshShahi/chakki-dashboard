@@ -16,5 +16,10 @@ export const API_CONSTANTS = {
   addChakki: '/admin/chakki',
   addChakkiImage: (chakkiId: UUID) => `/admin/chakki/${chakkiId}/image`,
   updateChakki: (chakkiId: UUID) => `/admin/chakki/${chakkiId}`,
-  getActiveMerchantList: `/admin/merchant/list`,
+  getActiveMerchantList: (page?: number, limit?: number, filters?: string) =>
+    createUrl(`/admin/merchant/list`, {
+      filters,
+      limit,
+      page,
+    }),
 };

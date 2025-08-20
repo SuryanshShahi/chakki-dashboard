@@ -117,18 +117,24 @@ export const getChakkiDetails = async (chakkiId: UUID) => {
 // ---------------------------------------- Merchants ----------------------------------------
 // --------------------------------------------------------------------------------------
 
-export const getMerchantList = async (
-  filters?: string,
+// export const getMerchantList = async (
+//   filters?: string,
+//   page?: number,
+//   limit?: number
+// ) => {
+//   const res = await axiosInstance().get(
+//     API_CONSTANTS.getChakkiList(filters, page, limit)
+//   );
+//   return res?.data || {};
+// };
+
+export const getActiveMerchantList = async (
   page?: number,
-  limit?: number
+  limit?: number,
+  filters?: string
 ) => {
   const res = await axiosInstance().get(
-    API_CONSTANTS.getChakkiList(filters, page, limit)
+    API_CONSTANTS.getActiveMerchantList(page, limit, filters)
   );
-  return res?.data || {};
-};
-
-export const getActiveMerchantList = async () => {
-  const res = await axiosInstance().get(API_CONSTANTS.getActiveMerchantList);
   return res?.data;
 };

@@ -28,6 +28,7 @@ export interface IChakkiList {
     latitude: number;
     longitude: number;
   };
+  merchant: IUser
 }
 
 export interface IAddChakki {

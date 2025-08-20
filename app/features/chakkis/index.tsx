@@ -16,6 +16,7 @@ import { useHook } from './useHook';
 const headings: ITableHeading[] = [
   { title: 'Chakki', variant: 'userCard' },
   { title: 'Address', variant: 'userCard' },
+  { title: 'Owner', variant: 'userCard' },
   { title: 'Status', variant: 'chip' },
 ];
 
@@ -34,6 +35,7 @@ const Chakkis = () => {
     chakki: IUserCard[];
     address: IUserCard[];
     status: (IChip | undefined)[];
+    merchant: IUserCard[];
   } = {
     chakki: chakkiList?.data?.map((e) => ({
       title: e.name,
@@ -67,6 +69,13 @@ const Chakkis = () => {
           />
         </div>
       ),
+    })),
+    merchant: chakkiList?.data?.map((e) => ({
+      title: e.merchant.name,
+      subtitle: e.merchant.phone,
+      type: 'info',
+      styleTitle: 'capitalize !font-normal',
+      showInitials: true,
     })),
     status: chakkiList?.data?.map((e) => ({
       title: e.status,

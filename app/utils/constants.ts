@@ -16,7 +16,7 @@ export const decodeToken = (token: string) => {
 };
 
 export const getInitials = (name: string) => {
-  const parts = name?.trim().split(" ");
+  const parts = name?.trim().split(' ');
   if (parts?.length === 1) {
     return parts[0].slice(0, 2).toUpperCase();
   }
@@ -82,3 +82,17 @@ export const getAllowedTypes = (fileTypes: string[]): FileType => {
 
   return { types, displayNames };
 };
+
+export function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  wait: number
+) {
+  let timeout: ReturnType<typeof setTimeout>;
+
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func(...args);
+    }, wait);
+  };
+}
