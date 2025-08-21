@@ -1,7 +1,7 @@
 'use client';
-import Heading from '@/app/shared/heading/Heading';
 import Text from '@/app/shared/Text';
 import Button from '@/app/shared/buttons/Button';
+import Heading from '@/app/shared/heading/Heading';
 import InputField from '@/app/shared/inputField';
 import OtpInputField from '@/app/shared/inputField/OtpInput';
 import { localize } from '@/i18n/dictionaries';

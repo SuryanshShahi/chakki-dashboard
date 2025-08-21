@@ -7,6 +7,7 @@ import {
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
 import { IDropdown, Option } from '@/app/shared/dropdown';
+import { debounce } from '@/app/utils/constants';
 import { addChakkiSchema } from '@/app/utils/schemas';
 import { IUser } from '@/app/utils/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -16,7 +17,6 @@ import { useFormik } from 'formik';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { IAddChakki, IChakkiDetails, IUpdateChakki } from '../types';
-import { debounce } from '@/app/utils/constants';
 
 interface IInitialValue extends IAddChakki {
   images?: {
@@ -27,6 +27,7 @@ interface IInitialValue extends IAddChakki {
   merchant: IDropdown | null;
   link?: string;
   showExtraContactInfo?: boolean;
+  mapLink?: string;
 }
 
 export function useHook(chakkiId?: UUID) {
@@ -79,6 +80,7 @@ export function useHook(chakkiId?: UUID) {
     addressId: chakkiDetails?.addressId,
     images: chakkiDetails?.photos || [],
     showExtraContactInfo: false,
+    mapLink: '',
   };
 
   const formikProps = useFormik({

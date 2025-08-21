@@ -4,6 +4,7 @@ import Chip from '@/app/shared/Chip';
 import Divider from '@/app/shared/Divider';
 import Loader from '@/app/shared/Loader';
 import Text from '@/app/shared/Text';
+import BtnGroup from '@/app/shared/buttons/BtnGroup';
 import Button from '@/app/shared/buttons/Button';
 import { Option } from '@/app/shared/dropdown';
 import AsyncCreatableDropDown from '@/app/shared/dropdown/AsyncCreatableDropDown';
@@ -11,7 +12,7 @@ import Dropzone from '@/app/shared/dropzone';
 import Heading from '@/app/shared/heading/Heading';
 import InputField from '@/app/shared/inputField';
 import LabelWithError from '@/app/shared/labelWithError';
-import Radio from '@/app/shared/radio';
+import { BOOLEAN_OPTIONS, extractLatLng } from '@/app/utils/constants';
 import { FileTypes } from '@/app/utils/enum';
 import { localize } from '@/i18n/dictionaries';
 import { IoIosAddCircleOutline } from 'react-icons/io';
@@ -34,6 +35,8 @@ export function AddChakki() {
     setFieldValue,
     handleSubmit,
   } = formikProps;
+
+  const generatedLatLng = extractLatLng(values.mapLink || '');
 
   console.log({ values });
 
@@ -75,7 +78,6 @@ export function AddChakki() {
           <AsyncCreatableDropDown
             name='merchant'
             required
-            wrapperClass='border p-2 rounded'
             options={merchantOptions}
             label='Owner'
             placeholder='Enter Name, Email or Phone'
@@ -93,28 +95,21 @@ export function AddChakki() {
             value={values.merchant || null}
             {...formikProps}
           />
-          <div className='col-span-2'>
-            <Text>Does the Chakki take Customer Requests</Text>
-            <div className='flex gap-2'>
-              <Radio
-                name='isCustomerRequestAvailable'
-                label='Yes'
-                isChecked={values.isCustomerRequestAvailable}
-                {...formikProps}
-                handleChange={(e) => {
-                  setFieldValue('isCustomerRequestAvailable', true);
-                }}
-              />
-              <Radio
-                name='isCustomerRequestAvailable'
-                label='No'
-                isChecked={!values.isCustomerRequestAvailable}
-                {...formikProps}
-                handleChange={(e) => {
-                  setFieldValue('isCustomerRequestAvailable', false);
-                }}
-              />
-            </div>
+          <div className='space-y-2'>
+            <Text size='sm' variant='secondary'>
+              Does the Chakki take Customer Requests
+            </Text>
+            <BtnGroup
+              buttons={BOOLEAN_OPTIONS}
+              onClick={(btn) => {
+                setFieldValue(
+                  'isCustomerRequestAvailable',
+                  btn.value === 'yes'
+                );
+              }}
+              className='text-sm'
+              selected={values.isCustomerRequestAvailable ? 'yes' : 'no'}
+            />
           </div>
           <InputField
             label={localize('min_order_value')}
@@ -132,7 +127,9 @@ export function AddChakki() {
           />
           <InputField
             label={localize('delivery_range')}
-            placeholder={localize('enter_delivery_range')}
+            placeholder={
+              localize('enter_delivery_range') + ' (' + localize('in_kms') + ')'
+            }
             onChange={handleChange('deliveryRangeInKms')}
             onBlur={handleBlur('deliveryRangeInKms')}
             value={values?.deliveryRangeInKms}
@@ -144,6 +141,24 @@ export function AddChakki() {
             type='number'
             wrapperClass='border p-2 rounded'
           />
+          <InputField
+            required
+            label={localize('map_link')}
+            placeholder={localize('enter_google_maps_link')}
+            onChange={handleChange('mapLink')}
+            onBlur={handleBlur('mapLink')}
+            value={values?.mapLink}
+            errorMessage={
+              errors?.mapLink && touched?.mapLink ? errors?.mapLink : ''
+            }
+            type='text'
+            wrapperClass='border p-2 rounded col-span-2'
+            helperText={
+              values.mapLink
+                ? `Latitude: ${generatedLatLng?.latitude}; Longitude: ${generatedLatLng?.longitude}`
+                : undefined
+            }
+          />
           <div className='space-y-2'>
             <InputField
               label={'External store links'}
@@ -151,17 +166,16 @@ export function AddChakki() {
               onChange={handleChange('link')}
               onBlur={handleBlur('link')}
               type='text'
-              errorMessage={
-                errors?.deliveryRangeInKms && touched?.deliveryRangeInKms
-                  ? errors?.deliveryRangeInKms
-                  : ''
-              }
+              errorMessage={errors?.link && touched?.link ? errors?.link : ''}
               value={values.link}
               wrapperClass='border p-2 rounded w-full'
               icon={
                 <IoIosAddCircleOutline
                   size={20}
                   onClick={() => {
+                    if (errors.link || !values.link) {
+                      return;
+                    }
                     const newExternalLink = [
                       ...(values.externalStoreLinks || []),
                       values.link,
@@ -187,28 +201,18 @@ export function AddChakki() {
               ))}
             </div>
           </div>
-          <div className='col-span-2'>
-            <Text>Contact Details of person that helps operate the chakki</Text>
-            <div className='flex gap-2'>
-              <Radio
-                name='showExtraContactInfo'
-                label='Yes'
-                isChecked={values.showExtraContactInfo}
-                {...formikProps}
-                handleChange={(e) => {
-                  setFieldValue('showExtraContactInfo', true);
-                }}
-              />
-              <Radio
-                name='showExtraContactInfo'
-                label='No'
-                isChecked={!values.showExtraContactInfo}
-                {...formikProps}
-                handleChange={(e) => {
-                  setFieldValue('showExtraContactInfo', false);
-                }}
-              />
-            </div>
+          <div className='col-span-2 space-y-2'>
+            <Text size='sm' variant='secondary'>
+              Contact Details of person that helps operate the chakki
+            </Text>
+            <BtnGroup
+              buttons={BOOLEAN_OPTIONS}
+              onClick={(btn) => {
+                setFieldValue('showExtraContactInfo', btn.value === 'yes');
+              }}
+              className='text-sm'
+              selected={values.showExtraContactInfo ? 'yes' : 'no'}
+            />
           </div>
           {values?.showExtraContactInfo && (
             <div className='col-span-2 grid grid-cols-2 gap-4'>

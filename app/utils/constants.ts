@@ -96,3 +96,32 @@ export function debounce<T extends (...args: any[]) => void>(
     }, wait);
   };
 }
+
+export const BOOLEAN_OPTIONS = [
+  {
+    label: 'Yes',
+    value: 'yes',
+  },
+  {
+    label: 'No',
+    value: 'no',
+  },
+];
+
+export const extractLatLng = (url: string) => {
+  if (!url) {
+    return null;
+  }
+  const match = url.match(/@([-.\d]+),([-.\d]+)/);
+  if (match) {
+    return {
+      latitude: parseFloat(match[1]),
+      longitude: parseFloat(match[2]),
+    };
+  }
+  return null;
+};
+
+export function combine(...args: (string | undefined | null)[]): string {
+  return args?.filter(Boolean)?.join(' ');
+}

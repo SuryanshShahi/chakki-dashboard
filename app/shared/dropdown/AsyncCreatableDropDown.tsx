@@ -1,9 +1,12 @@
 import useInteractiveStates from '@/app/utils/hooks/interactiveStates';
 import { CheckIcon } from '@/app/utils/svgs';
+import { tw } from '@/tailwind.config';
 import clsx from 'clsx';
 import { FormikProps } from 'formik';
 import Image from 'next/image';
 import React, { ReactNode, useState } from 'react';
+import { PiWarningCircleFill } from 'react-icons/pi';
+import { SlArrowRight } from 'react-icons/sl';
 import Select, {
   ActionMeta,
   OptionProps,
@@ -12,8 +15,6 @@ import Select, {
 } from 'react-select';
 import { OptionCore } from '.';
 import NameInitial from '../nameInitial/NameInitial';
-import { SlArrowRight } from 'react-icons/sl';
-import { PiWarningCircleFill } from 'react-icons/pi';
 
 export interface Option extends OptionCore {
   icon?: React.ReactNode;
@@ -140,11 +141,11 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
   return (
     <div
       className={clsx(
-        'cursor-pointer space-y-1 text-gray-400 relative',
+        'cursor-pointer space-y-1 text-gray-400 relative px-2 pt-2 border rounded',
         wrapperClass
       )}
     >
-      <div className='text-xs md:text-sm'>
+      <div className='text-xs md:text-sm -mb-2'>
         {label}
         {required && <span className='text-xs text-red-600'> *</span>}
       </div>
@@ -160,7 +161,7 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
           menuPlacement='auto'
           maxMenuHeight={220}
           className={clsx(
-            'dropdown-container placeholder:text-base placeholder:!text-placeholder capitalize block w-full text-base focus-within:outline-none p-0 m-0',
+            'dropdown-container capitalize block w-full text-base focus-within:outline-none p-0 m-0',
             !lostFocus && '!border-brand',
             'shadow-none disabled:bg-disabled'
           )}
@@ -182,15 +183,15 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
               margin: 0,
               height: 'max-content',
             }),
+            placeholder: (base) => ({
+              ...base,
+              // by @suryansh
+              color: tw.textColor['reddjaksbhdkaj-500'],
+            }),
             option: (base) => ({
               ...base,
               color: 'black',
               background: '#eee',
-            }),
-            container: (base) => ({
-              ...base,
-              padding: 0,
-              margin: 0,
             }),
             valueContainer: (base) => ({
               ...base,
@@ -214,19 +215,19 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
           name={name}
           value={value || (isMulti ? [] : null)}
         />
-      </div>
-      <div className='absolute right-2 top-[50%] bottom-[50%]'>
         {icon ? (
           <SlArrowRight
             size={14}
-            className={`ml-auto rotate-90 text-gray-400`}
+            className={`ml-auto rotate-90 text-gray-400 absolute right-0 top-[25%]`}
           />
         ) : touched?.[name] && errors?.[name] ? (
-          <PiWarningCircleFill className='text-red-600' />
+          <PiWarningCircleFill className='text-red-600 absolute right-0 top-[25%]' />
         ) : null}
       </div>
       {touched?.[name] && errors?.[name] && (
-        <span className='text-xs text-red-600'>{errors[name] as string}</span>
+        <span className='text-xs text-red-600 relative bottom-2'>
+          {errors[name] as string}
+        </span>
       )}
     </div>
   );

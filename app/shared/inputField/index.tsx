@@ -26,6 +26,7 @@ export interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
     dial_code: string;
   }) => void;
   suffix?: ReactNode;
+  helperText?: string;
 }
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
@@ -45,6 +46,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       disabled,
       required,
       suffix,
+      helperText,
       ...rest
     } = props;
     const [inputType, setInputType] = useState(type);
@@ -109,6 +111,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
         {errorMessage && (
           <div className='text-xs text-red-600'>{errorMessage}</div>
         )}
+        {helperText && <div className='text-xs'>{helperText}</div>}
       </div>
     );
   }

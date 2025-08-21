@@ -1,3 +1,4 @@
+import { localize } from '@/i18n/dictionaries';
 import * as yup from 'yup';
 import { ErrorMessage, Regex } from './static';
 
@@ -32,11 +33,16 @@ export const addChakkiSchema = () =>
     minOrderAmount: yup.number(),
     deliveryRangeInKms: yup.number(),
     externalStoreLinks: yup.array().of(yup.string()),
+    link: yup.string().matches(Regex.URL, localize('invalid_url')),
     contactDetails: yup.object().shape({
       name: yup.string(),
       phone: yup.string(),
       email: yup.string(),
     }),
+    mapLink: yup
+      .string()
+      .required(localize('map_link_is_required'))
+      .matches(Regex.MAP_LINK, localize('invalid_map_link')),
     // todo: pending implementation
     operationalHours: yup.object(),
     addressId: yup.string(),

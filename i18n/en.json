@@ -8,5 +8,11 @@
   "min_order_value": "Minimum Order Value",
   "enter_min_order_value": "Enter Minimum Order Value",
   "delivery_range": "Delivery range",
-  "enter_delivery_range": "Enter Delivery range"
+  "enter_delivery_range": "Enter Delivery range",
+  "in_kms": "in kms",
+  "invalid_map_link": "Invalid map link",
+  "map_link_is_required": "Map link is required",
+  "invalid_url": "Invalid URL",
+  "map_link": "Map link",
+  "enter_google_maps_link": "Enter google maps link"
 }
