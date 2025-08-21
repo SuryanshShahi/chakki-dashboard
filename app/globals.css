@@ -51,3 +51,7 @@ body * {
   border-radius: 10px;
   opacity: 1;
 }
+
+.react-time-picker__wrapper {
+  border: none !important;
+}

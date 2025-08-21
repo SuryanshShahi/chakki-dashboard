@@ -39,11 +39,19 @@ export const addChakkiSchema = () =>
       phone: yup.string(),
       email: yup.string(),
     }),
-    mapLink: yup
-      .string()
-      .required(localize('map_link_is_required'))
-      .matches(Regex.MAP_LINK, localize('invalid_map_link')),
+    address: yup.object().shape({
+      addressLine1: yup
+        .string()
+        .max(255)
+        .required(localize('address_line_1_is_required')),
+      addressLine2: yup.string().max(255),
+      addressLine3: yup.string().max(255),
+      landmark: yup.string().max(255),
+      mapLink: yup
+        .string()
+        .required(localize('map_link_is_required'))
+        .matches(Regex.MAP_LINK, localize('invalid_map_link')),
+    }),
     // todo: pending implementation
     operationalHours: yup.object(),
-    addressId: yup.string(),
   });

@@ -28,7 +28,7 @@ export interface IChakkiList {
     latitude: number;
     longitude: number;
   };
-  merchant: IUser
+  merchant: IUser;
 }
 
 export interface IAddChakki {
@@ -41,9 +41,18 @@ export interface IAddChakki {
   operationalHours?: unknown;
   isAcceptingOrders?: boolean;
   isAcceptingPickups?: boolean;
-  addressId?: UUID;
   deliveryRangeInKms?: number;
   externalStoreLinks?: string[];
+}
+
+export interface IAddChakkiAddress {
+  googlePlaceId?: string;
+  addressLine1: string;
+  addressLine2?: string;
+  addressLine3?: string;
+  landmark?: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface IUpdateChakki

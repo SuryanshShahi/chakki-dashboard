@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { UUID } from 'crypto';
 import { IRequestOtp, IVerifyOtp } from '../features/auth/types';
-import { IAddChakki, IUpdateChakki } from '../features/chakkis/types';
+import {
+  IAddChakki,
+  IAddChakkiAddress,
+  IUpdateChakki,
+} from '../features/chakkis/types';
 import { getCookie } from '../utils/cookies';
 import { getLocalItem } from '../utils/localstorage';
 import { API_CONSTANTS } from './apiConstants';
@@ -90,6 +94,17 @@ export const addChakki = async (body: IAddChakki) => {
   return res?.data;
 };
 
+export const addChakkiAddress = async (
+  addressId: UUID,
+  body: IAddChakkiAddress
+) => {
+  const res = await axiosInstance().post(
+    API_CONSTANTS.addChakkiAddress(addressId),
+    body
+  );
+  return res?.data;
+};
+
 export const updateChakki = async (chakkiId: UUID, body: IUpdateChakki) => {
   const res = await axiosInstance().post(
     API_CONSTANTS.updateChakki(chakkiId),
@@ -117,16 +132,16 @@ export const getChakkiDetails = async (chakkiId: UUID) => {
 // ---------------------------------------- Merchants ----------------------------------------
 // --------------------------------------------------------------------------------------
 
-// export const getMerchantList = async (
-//   filters?: string,
-//   page?: number,
-//   limit?: number
-// ) => {
-//   const res = await axiosInstance().get(
-//     API_CONSTANTS.getChakkiList(filters, page, limit)
-//   );
-//   return res?.data || {};
-// };
+export const getMerchantList = async (
+  filters?: string,
+  page?: number,
+  limit?: number
+) => {
+  const res = await axiosInstance().get(
+    API_CONSTANTS.getChakkiList(filters, page, limit)
+  );
+  return res?.data || {};
+};
 
 export const getActiveMerchantList = async (
   page?: number,

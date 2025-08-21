@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -24,6 +24,7 @@
     "react-icons": "^5.5.0",
     "react-otp-input": "^3.1.1",
     "react-select": "^5.10.2",
+    "react-time-picker": "^8.0.2",
     "react-toastify": "^11.0.5",
     "yup": "^1.6.1"
   },

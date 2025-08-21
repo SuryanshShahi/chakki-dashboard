@@ -1,5 +1,6 @@
 import {
   addChakki,
+  addChakkiAddress,
   addChakkiImages,
   getActiveMerchantList,
   getChakkiDetails,
@@ -7,7 +8,7 @@ import {
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
 import { IDropdown, Option } from '@/app/shared/dropdown';
-import { debounce } from '@/app/utils/constants';
+import { debounce, extractLatLng } from '@/app/utils/constants';
 import { addChakkiSchema } from '@/app/utils/schemas';
 import { IUser } from '@/app/utils/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -16,9 +17,14 @@ import { UUID } from 'crypto';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { IAddChakki, IChakkiDetails, IUpdateChakki } from '../types';
+import {
+  IAddChakki,
+  IAddChakkiAddress,
+  IChakkiDetails,
+  IUpdateChakki,
+} from '../types';
 
-interface IInitialValue extends IAddChakki {
+export interface IInitialValue extends IAddChakki {
   images?: {
     id?: UUID;
     url?: string;
@@ -27,7 +33,16 @@ interface IInitialValue extends IAddChakki {
   merchant: IDropdown | null;
   link?: string;
   showExtraContactInfo?: boolean;
-  mapLink?: string;
+  selectedDays: number[];
+  startTime?: string;
+  endTime?: string;
+  address?: {
+    addressLine1: string;
+    addressLine2: string;
+    addressLine3: string;
+    mapLink?: string;
+    landmark?: string;
+  } | null;
 }
 
 export function useHook(chakkiId?: UUID) {
@@ -57,8 +72,6 @@ export function useHook(chakkiId?: UUID) {
     refetchOnMount: true,
   });
 
-  console.log(merchantList);
-
   const initialValues: IInitialValue = {
     name: chakkiDetails?.name ?? '',
     code: chakkiDetails?.code ?? '',
@@ -77,10 +90,10 @@ export function useHook(chakkiId?: UUID) {
     deliveryRangeInKms: chakkiDetails?.deliveryRangeInKms,
     contactDetails: chakkiDetails?.contactDetails,
     externalStoreLinks: chakkiDetails?.externalStoreLinks || [],
-    addressId: chakkiDetails?.addressId,
     images: chakkiDetails?.photos || [],
     showExtraContactInfo: false,
-    mapLink: '',
+    selectedDays: [0, 1, 2, 3, 4, 5, 6],
+    address: null,
   };
 
   const formikProps = useFormik({
@@ -119,6 +132,17 @@ export function useHook(chakkiId?: UUID) {
     },
   });
 
+  const { mutate: addChakkiAddressMutation } = useMutation({
+    mutationFn: (data: { chakkiId: UUID; payload: IAddChakkiAddress }) =>
+      addChakkiAddress(data.chakkiId, data.payload),
+    onError: (err: any) => {
+      showToast({
+        title: err?.response?.data?.message,
+        type: 'error',
+      });
+    },
+  });
+
   const addNewChakkiImages = (chakkiId: UUID) => {
     const formData = new FormData();
     values.images
@@ -143,6 +167,18 @@ export function useHook(chakkiId?: UUID) {
 
       if (values.images?.filter((i) => i?.file)?.length) {
         addNewChakkiImages(res?.id);
+      }
+
+      if (values.address) {
+        const payload = {
+          ...values.address,
+          latitude: extractLatLng(values.address.mapLink!)?.latitude || 0,
+          longitude: extractLatLng(values.address.mapLink!)?.longitude || 0,
+        };
+        addChakkiAddressMutation({
+          chakkiId: res?.id,
+          payload,
+        });
       }
 
       router.replace('/chakkis');

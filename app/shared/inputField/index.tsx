@@ -64,7 +64,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 
     return (
       <div
-        className={clsx('cursor-pointer space-y-1 text-gray-400', wrapperClass)}
+        className={clsx('cursor-pointer space-y-1 text-gray-400 max-h-max', wrapperClass)}
         onClick={onClick}
       >
         <div className='text-xs md:text-sm'>
