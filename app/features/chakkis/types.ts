@@ -14,9 +14,7 @@ export interface IChakkiList {
   code: string;
   status: Status;
   isCustomerRequestAvailable: boolean;
-  operationalHours: {
-    days: [];
-  };
+  operationalHours: IOperationalHours;
   isAcceptingOrders: boolean;
   isAcceptingPickup: boolean;
   addressId: UUID;
@@ -31,14 +29,14 @@ export interface IChakkiList {
   merchant: IUser;
 }
 
-export interface IAddChakki {
+export interface IAddChakkiPayload {
   name: string;
   code: string;
   merchantId?: UUID;
   contactDetails?: IChakkiContactDetails;
   isCustomerRequestAvailable?: boolean;
   minOrderAmount?: number;
-  operationalHours?: unknown;
+  operationalHours?: IOperationalHours;
   isAcceptingOrders?: boolean;
   isAcceptingPickups?: boolean;
   deliveryRangeInKms?: number;
@@ -56,7 +54,7 @@ export interface IAddChakkiAddress {
 }
 
 export interface IUpdateChakki
-  extends Omit<IAddChakki, 'merchantId' | 'addressId'> {}
+  extends Omit<IAddChakkiPayload, 'merchantId' | 'addressId'> {}
 
 export interface IChakkiDetails extends IChakkiList {
   externalStoreLinks: string[];
@@ -64,4 +62,11 @@ export interface IChakkiDetails extends IChakkiList {
   address: IAddress;
   minOrderValue: number;
   contactDetails?: IChakkiContactDetails;
+}
+
+export interface IOperationalHours {
+  [day: number]: {
+    startTime: string;
+    endTime: string;
+  };
 }

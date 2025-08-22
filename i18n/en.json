@@ -23,5 +23,6 @@
   "address_line_3": "Address Line 3",
   "enter_address_line_3": "Enter address Line 3",
   "landmark": "Landmark",
-  "enter_landmark": "Enter landmark"
+  "enter_landmark": "Enter landmark",
+  "minimum_1_day_required": "Minimum 1 day required"
 }

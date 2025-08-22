@@ -2,7 +2,7 @@ import axios from 'axios';
 import { UUID } from 'crypto';
 import { IRequestOtp, IVerifyOtp } from '../features/auth/types';
 import {
-  IAddChakki,
+  IAddChakkiPayload,
   IAddChakkiAddress,
   IUpdateChakki,
 } from '../features/chakkis/types';
@@ -89,7 +89,7 @@ export const getChakkiList = async (
   return res?.data || {};
 };
 
-export const addChakki = async (body: IAddChakki) => {
+export const addChakki = async (body: IAddChakkiPayload) => {
   const res = await axiosInstance().post(API_CONSTANTS.addChakki, body);
   return res?.data;
 };

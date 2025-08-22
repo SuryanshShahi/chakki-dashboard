@@ -2,6 +2,7 @@
 import PageWrapper from '@/app/components/pageWrapper/PageWrapper';
 import Chip from '@/app/shared/Chip';
 import Divider from '@/app/shared/Divider';
+import Loader from '@/app/shared/Loader';
 import Text from '@/app/shared/Text';
 import BtnGroup from '@/app/shared/buttons/BtnGroup';
 import Button from '@/app/shared/buttons/Button';
@@ -18,9 +19,8 @@ import { localize } from '@/i18n/dictionaries';
 import clsx from 'clsx';
 import { getIn } from 'formik';
 import { IoIosAddCircleOutline } from 'react-icons/io';
-import { IAddChakki } from '../types';
-import { IInitialValue, useHook } from './useHook';
-import Loader from '@/app/shared/Loader';
+import { IAddChakkiPayload } from '../types';
+import { useHook } from './useHook';
 
 const days = [
   { label: 'M', value: 1 },
@@ -81,7 +81,9 @@ export function AddChakki() {
             prefix='#'
             label={localize('code')}
             placeholder={localize('enter_chakki_code')}
-            onChange={handleChange('code')}
+            onChange={(e) => {
+              setFieldValue('code', e.toUpperCase());
+            }}
             onBlur={handleBlur('code')}
             value={values.code}
             errorMessage={errors.code && touched?.code ? errors.code : ''}
@@ -185,7 +187,7 @@ export function AddChakki() {
               {values.externalStoreLinks?.map((l, index) => (
                 <Chip
                   key={index}
-                  title={l}
+                  title={l?.length > 50 ? l.slice(0, 50) + '...' : l}
                   handleRemove={() => {
                     const newExternalLink = values.externalStoreLinks?.filter(
                       (_, idx) => idx !== index
@@ -218,12 +220,14 @@ export function AddChakki() {
                 onBlur={handleBlur('contactDetails.name')}
                 value={values.contactDetails?.name}
                 errorMessage={
-                  (errors.contactDetails as IAddChakki['contactDetails'])
+                  (errors.contactDetails as IAddChakkiPayload['contactDetails'])
                     ?.name &&
-                  (touched?.contactDetails as IAddChakki['contactDetails'])
-                    ?.name
-                    ? (errors.contactDetails as IAddChakki['contactDetails'])
-                        ?.name
+                  (
+                    touched?.contactDetails as IAddChakkiPayload['contactDetails']
+                  )?.name
+                    ? (
+                        errors.contactDetails as IAddChakkiPayload['contactDetails']
+                      )?.name
                     : ''
                 }
                 type='text'
@@ -236,12 +240,14 @@ export function AddChakki() {
                 onBlur={handleBlur('contactDetails.phone')}
                 value={values.contactDetails?.phone}
                 errorMessage={
-                  (errors.contactDetails as IAddChakki['contactDetails'])
+                  (errors.contactDetails as IAddChakkiPayload['contactDetails'])
                     ?.phone &&
-                  (touched?.contactDetails as IAddChakki['contactDetails'])
-                    ?.phone
-                    ? (errors.contactDetails as IAddChakki['contactDetails'])
-                        ?.phone
+                  (
+                    touched?.contactDetails as IAddChakkiPayload['contactDetails']
+                  )?.phone
+                    ? (
+                        errors.contactDetails as IAddChakkiPayload['contactDetails']
+                      )?.phone
                     : ''
                 }
                 type='text'
@@ -254,12 +260,14 @@ export function AddChakki() {
                 onBlur={handleBlur('contactDetails.email')}
                 value={values.contactDetails?.email}
                 errorMessage={
-                  (errors.contactDetails as IAddChakki['contactDetails'])
+                  (errors.contactDetails as IAddChakkiPayload['contactDetails'])
                     ?.email &&
-                  (touched?.contactDetails as IAddChakki['contactDetails'])
-                    ?.email
-                    ? (errors.contactDetails as IAddChakki['contactDetails'])
-                        ?.email
+                  (
+                    touched?.contactDetails as IAddChakkiPayload['contactDetails']
+                  )?.email
+                    ? (
+                        errors.contactDetails as IAddChakkiPayload['contactDetails']
+                      )?.email
                     : ''
                 }
                 type='text'
@@ -320,7 +328,7 @@ export function AddChakki() {
                 />
               ))}
             </div>
-            <Text size='xs' variant='error-primary'>
+            <Text size='xs' className='text-error-primary'>
               {errors.selectedDays}
             </Text>
             <div className='flex gap-x-4 !mt-4'>
@@ -361,7 +369,9 @@ export function AddChakki() {
             required
             label={localize('address_line_1')}
             placeholder={localize('enter_address_line_1')}
-            onChange={handleChange('address.addressLine1')}
+            onChange={(e) => {
+              setFieldValue('address.addressLine1', e);
+            }}
             onBlur={handleBlur('address.addressLine1')}
             value={values.address?.addressLine1}
             errorMessage={

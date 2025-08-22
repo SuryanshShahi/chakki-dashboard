@@ -21,7 +21,11 @@ export const addChakkiSchema = () =>
       .string()
       .required('Code is required')
       .min(1, 'Code must be at least 1 characters long')
-      .max(255, 'Code must be less than 255 characters long'),
+      .max(255, 'Code must be less than 255 characters long')
+      .matches(
+        Regex.ALPHANUMERIC_AND_DASHES,
+        'Code must contain only letters, numbers, and dashes'
+      ),
     merchant: yup
       .object({
         value: yup.string().required('Merchant is required'),
@@ -52,6 +56,9 @@ export const addChakkiSchema = () =>
         .required(localize('map_link_is_required'))
         .matches(Regex.MAP_LINK, localize('invalid_map_link')),
     }),
-    // todo: pending implementation
+    selectedDays: yup
+      .array()
+      .of(yup.number())
+      .min(1, localize('minimum_1_day_required')),
     operationalHours: yup.object(),
   });

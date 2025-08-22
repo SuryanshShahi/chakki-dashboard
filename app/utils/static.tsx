@@ -72,6 +72,7 @@ export const Regex = {
   AT_LEAST_ONE_NUMBER: /^(?=.*\d)/,
   AT_LEAST_ONE_SPECIAL_CHAR: /^(?=.*[#?!@$%^&*-]).*$/,
   ALPHANUMERIC: /^[a-zA-Z0-9]+$/,
+  ALPHANUMERIC_AND_DASHES: /^[A-Za-z0-9-]+$/,
   MAP_LINK: /@([-.\d]+),([-.\d]+)/,
   URL: /((?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9._-]+\.[a-zA-Z]{2,}(?:[\/?#][^\s]*)?)/g,
 };
