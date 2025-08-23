@@ -20,12 +20,7 @@ export interface IChakkiList {
   addressId: UUID;
   deliveryRangeInKms: number;
   photos: { id?: UUID; url: string }[];
-  address: {
-    id: UUID;
-    addressLine1: string;
-    latitude: number;
-    longitude: number;
-  };
+  address: IAddChakkiAddress;
   merchant: IUser;
 }
 
@@ -55,6 +50,10 @@ export interface IAddChakkiAddress {
 
 export interface IUpdateChakki
   extends Omit<IAddChakkiPayload, 'merchantId' | 'addressId'> {}
+
+export interface IUpdateChakkiStatus {
+  status: string;
+}
 
 export interface IChakkiDetails extends IChakkiList {
   externalStoreLinks: string[];

@@ -11,18 +11,17 @@
   "enter_delivery_range": "Enter Delivery range",
   "in_kms": "in kms",
   "invalid_map_link": "Invalid map link",
-  "map_link_is_required": "Map link is required",
   "invalid_url": "Invalid URL",
   "map_link": "Map link",
   "enter_google_maps_link": "Enter google maps link",
   "address_line_1": "Address Line 1",
   "enter_address_line_1": "Enter address Line 1",
-  "address_line_1_is_required": "Address Line 1 is required",
   "address_line_2": "Address Line 2",
   "enter_address_line_2": "Enter address Line 2",
   "address_line_3": "Address Line 3",
   "enter_address_line_3": "Enter address Line 3",
   "landmark": "Landmark",
   "enter_landmark": "Enter landmark",
-  "minimum_1_day_required": "Minimum 1 day required"
+  "enter_merchant_name": "Enter merchant name",
+  "enter_merchant_email": "Enter merchant email"
 }

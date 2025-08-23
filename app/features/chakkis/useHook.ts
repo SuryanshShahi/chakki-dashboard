@@ -1,5 +1,11 @@
-import { getChakkiList } from '@/app/apis/apis';
-import { useQuery } from '@tanstack/react-query';
+import {
+  deleteChakki,
+  getChakkiList,
+  updateChakkiStatus,
+} from '@/app/apis/apis';
+import { showToast } from '@/app/shared/ToastMessage';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { UUID } from 'crypto';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IChakkiList } from './types';
@@ -39,7 +45,11 @@ export const useHook = () => {
 
   const hasFilters = Object.values(modifiedFilters).filter(Boolean).length;
 
-  const { data: chakkiList = { data: [] }, isLoading } = useQuery<{
+  const {
+    data: chakkiList = { data: [] },
+    isLoading,
+    refetch: refetchChakkis,
+  } = useQuery<{
     data: IChakkiList[];
   }>({
     queryKey: [
@@ -58,13 +68,54 @@ export const useHook = () => {
       ),
   });
 
+  const { mutate: deleteChakkiMutation } = useMutation({
+    mutationFn: (chakkiId: UUID) => deleteChakki(chakkiId),
+    onSuccess: () => {
+      refetchChakkis();
+      showToast({
+        title: 'Chakki Deleted Successfully',
+        type: 'success',
+      });
+    },
+    onError: (err: any) => {
+      showToast({
+        title: err?.response?.data?.response?.message,
+        type: 'error',
+      });
+    },
+    onSettled: () => {},
+  });
+
+  const { mutate: updateChakkiStatusMutation } = useMutation({
+    mutationFn: (data: { chakkiId: UUID; status: string }) =>
+      updateChakkiStatus(data.chakkiId, {
+        status: data.status,
+      }),
+    onSuccess: () => {
+      refetchChakkis();
+      showToast({
+        title: 'Chakki Activated',
+        type: 'success',
+      });
+    },
+    onError: (err: any) => {
+      showToast({
+        title: err?.response?.data?.response?.message,
+        type: 'error',
+      });
+    },
+    onSettled: () => {},
+  });
+
   return {
     router,
     chakkiList,
     isLoading,
     filters,
     hasFilters,
-    setFilters,
     initialFilters,
+    setFilters,
+    deleteChakkiMutation,
+    updateChakkiStatusMutation,
   };
 };

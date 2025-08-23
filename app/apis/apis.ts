@@ -2,10 +2,12 @@ import axios from 'axios';
 import { UUID } from 'crypto';
 import { IRequestOtp, IVerifyOtp } from '../features/auth/types';
 import {
-  IAddChakkiPayload,
   IAddChakkiAddress,
+  IAddChakkiPayload,
   IUpdateChakki,
+  IUpdateChakkiStatus,
 } from '../features/chakkis/types';
+import { IAddMerchantPayload } from '../features/merchants/types';
 import { getCookie } from '../utils/cookies';
 import { getLocalItem } from '../utils/localstorage';
 import { API_CONSTANTS } from './apiConstants';
@@ -113,6 +115,24 @@ export const updateChakki = async (chakkiId: UUID, body: IUpdateChakki) => {
   return res?.data;
 };
 
+export const updateChakkiStatus = async (
+  chakkiId: UUID,
+  body: IUpdateChakkiStatus
+) => {
+  const res = await axiosInstance().patch(
+    API_CONSTANTS.updateChakkiStatus(chakkiId),
+    body
+  );
+  return res?.data;
+};
+
+export const deleteChakki = async (chakkiId: UUID) => {
+  const res = await axiosInstance().delete(
+    API_CONSTANTS.deleteChakki(chakkiId)
+  );
+  return res?.data;
+};
+
 export const addChakkiImages = async (chakkiId: UUID, formData: any) => {
   const res = await axiosInstance().post(
     API_CONSTANTS.addChakkiImage(chakkiId),
@@ -131,6 +151,11 @@ export const getChakkiDetails = async (chakkiId: UUID) => {
 // --------------------------------------------------------------------------------------
 // ---------------------------------------- Merchants ----------------------------------------
 // --------------------------------------------------------------------------------------
+
+export const addMerchant = async (body: IAddMerchantPayload) => {
+  const res = await axiosInstance().post(API_CONSTANTS.addMerchant, body);
+  return res?.data;
+};
 
 export const getMerchantList = async (
   filters?: string,

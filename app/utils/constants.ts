@@ -125,3 +125,7 @@ export const extractLatLng = (url: string) => {
 export function combine(...args: (string | undefined | null)[]): string {
   return args?.filter(Boolean)?.join(' ');
 }
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};

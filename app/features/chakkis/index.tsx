@@ -7,10 +7,15 @@ import { IUserCard } from '@/app/shared/UserCard';
 import Button from '@/app/shared/buttons/Button';
 import HeadingWithBtn from '@/app/shared/heading/HeadingWithBtn';
 import Table from '@/app/shared/table';
-import { SvgLocation } from '@/app/utils/svgs';
+import { IAction, IMenuItem } from '@/app/shared/table/types';
+import { SvgTrash } from '@/app/svgs';
+import { capitalize } from '@/app/utils/constants';
+import { SvgEdit, SvgLocation } from '@/app/utils/svgs';
 import { ITableHeading } from '@/app/utils/types';
 import { tw } from '@/tailwind.config';
+import { GiNightSleep } from 'react-icons/gi';
 import { IoIosAddCircleOutline } from 'react-icons/io';
+import { TiTick } from 'react-icons/ti';
 import { useHook } from './useHook';
 
 const headings: ITableHeading[] = [
@@ -18,6 +23,11 @@ const headings: ITableHeading[] = [
   { title: 'Address', variant: 'userCard' },
   { title: 'Owner', variant: 'userCard' },
   { title: 'Status', variant: 'chip' },
+  {
+    title: 'Action',
+    variant: 'actions',
+    actions: ['edit', 'activate', 'archive', 'delete'],
+  },
 ];
 
 const Chakkis = () => {
@@ -29,6 +39,8 @@ const Chakkis = () => {
     hasFilters,
     setFilters,
     initialFilters,
+    deleteChakkiMutation,
+    updateChakkiStatusMutation,
   } = useHook();
 
   const tableData: {
@@ -36,6 +48,7 @@ const Chakkis = () => {
     address: IUserCard[];
     status: (IChip | undefined)[];
     merchant: IUserCard[];
+    actions: IAction[][];
   } = {
     chakki: chakkiList?.data?.map((e) => ({
       title: e.name,
@@ -47,8 +60,10 @@ const Chakkis = () => {
       styleImage: 'min-w-10 object-cover',
     })),
     address: chakkiList?.data?.map((e) => ({
-      title: e.address?.addressLine1,
-      subtitle: e.code,
+      title: e.address
+        ? `${e.address?.addressLine1} ${e.address?.addressLine2 || ''}`
+        : '--',
+      subtitle: e.address?.landmark ? `Near ${e.address?.landmark}` : '',
       type: 'info',
       styleTitle: 'capitalize !font-normal',
       children: e?.address?.longitude && e?.address?.latitude && (
@@ -78,12 +93,78 @@ const Chakkis = () => {
       showInitials: true,
     })),
     status: chakkiList?.data?.map((e) => ({
-      title: e.status,
+      title: capitalize(e.status),
       className: 'rounded-full !px-[10px]',
       variant: getVariant(e?.status),
       type: 'tag',
       size: 'sm',
     })),
+    actions: chakkiList?.data?.map((item) => [
+      {
+        btn: 'menu',
+        menuItems: [
+          item?.status !== 'inactive' && {
+            icon: (
+              <SvgEdit
+                height={15}
+                width={15}
+                stroke={tw.textColor['brand-primary']}
+                className='cursor-pointer'
+              />
+            ),
+            text: 'Edit',
+            onClick: () => {
+              router.push(`/chakki/${item?.id}/edit`);
+            },
+          },
+          ['draft', 'inactive'].includes(item?.status) && {
+            icon: (
+              <TiTick
+                height={50}
+                width={50}
+                color={tw.textColor['success-primary']}
+                className='cursor-pointer'
+              />
+            ),
+            text: 'Activate',
+            onClick: () => {
+              updateChakkiStatusMutation({
+                chakkiId: item.id,
+                status: 'active',
+              });
+            },
+          },
+          ['draft', 'inactive'].includes(item?.status) && {
+            icon: (
+              <GiNightSleep
+                height={20}
+                width={20}
+                color={tw.textColor['warning-primary']}
+                className='cursor-pointer'
+              />
+            ),
+            text: 'Inactivate',
+            onClick: () => {
+              updateChakkiStatusMutation({
+                chakkiId: item.id,
+                status: 'inactive',
+              });
+            },
+          },
+          {
+            icon: (
+              <SvgTrash
+                height={16}
+                width={16}
+                stroke={tw.textColor['error-primary']}
+              />
+            ),
+            text: 'Delete',
+            onClick: () => deleteChakkiMutation(item?.id),
+          },
+        ].filter(Boolean) as IMenuItem[],
+      },
+    ]),
   };
 
   return (
@@ -140,8 +221,6 @@ const Chakkis = () => {
 export default Chakkis;
 
 const getVariant = (status: string) => {
-  console.log({ status });
-
   if (status === 'draft') {
     return 'warning';
   } else if (status === 'active') {

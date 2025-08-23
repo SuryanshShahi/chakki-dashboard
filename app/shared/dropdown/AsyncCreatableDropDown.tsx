@@ -191,7 +191,6 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
             option: (base) => ({
               ...base,
               color: 'black',
-              background: '#eee',
             }),
             valueContainer: (base) => ({
               ...base,

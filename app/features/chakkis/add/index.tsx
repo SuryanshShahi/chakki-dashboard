@@ -19,6 +19,8 @@ import { localize } from '@/i18n/dictionaries';
 import clsx from 'clsx';
 import { getIn } from 'formik';
 import { IoIosAddCircleOutline } from 'react-icons/io';
+import { AddMerchantModal } from '../../merchants/add';
+import { IAddMerchantPayload } from '../../merchants/types';
 import { IAddChakkiPayload } from '../types';
 import { useHook } from './useHook';
 
@@ -36,8 +38,12 @@ export function AddChakki() {
   const {
     formikProps,
     merchantOptions,
-    isLoadingMerchants,
+    isFetchMerchants,
+    isAddMerchant,
+    setIsAddMerchant,
     loadMerchantOptions,
+    onCreateNewMerchant,
+    refetchMerchant,
   } = useHook();
   const {
     values,
@@ -51,15 +57,26 @@ export function AddChakki() {
 
   const generatedLatLng = extractLatLng(values.address?.mapLink || '');
 
-  console.log({ values, errors });
-
-  if (isLoadingMerchants) return <Loader variant='full-screen' />;
+  if (isFetchMerchants) return <Loader />;
 
   return (
     <PageWrapper
       breadCrumbs={[{ label: 'Chakkis', path: '/chakkis' }, { label: 'Add' }]}
     >
       <div className='space-y-6'>
+        <AddMerchantModal
+          isOpen={isAddMerchant !== null}
+          close={() => setIsAddMerchant(null)}
+          size='md'
+          onAddMerchant={(merchant: IAddMerchantPayload) => {
+            setFieldValue('merchant', {
+              label: `${merchant.name} (${merchant.phone})`,
+              value: merchant.id,
+            });
+            setIsAddMerchant(null);
+            refetchMerchant();
+          }}
+        />
         <Heading variant='h1' className='!text-3xl'>
           Add Chakki
         </Heading>
@@ -97,15 +114,15 @@ export function AddChakki() {
             label='Owner'
             placeholder='Enter Name, Email or Phone'
             className='w-full cursor-pointer'
-            isLoading={isLoadingMerchants}
+            isLoading={isFetchMerchants}
             useInternalState={false}
             isMulti={false}
             onLoadOptions={loadMerchantOptions}
             onChangeDropdown={(selected: Option) => {
               setFieldValue('merchant', selected || null);
             }}
-            onCreateNew={(key) => {
-              console.log('key');
+            onCreateNew={(key: string) => {
+              onCreateNewMerchant(key);
             }}
             value={values.merchant || null}
             {...formikProps}

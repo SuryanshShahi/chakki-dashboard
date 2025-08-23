@@ -14,12 +14,12 @@ export const addChakkiSchema = () =>
   yup.object().shape({
     name: yup
       .string()
-      .required('Name is required')
+      .required(ErrorMessage.REQUIRED)
       .min(1, 'Name must be at least 1 characters long')
       .max(255, 'Name must be less than 255 characters long'),
     code: yup
       .string()
-      .required('Code is required')
+      .required(ErrorMessage.REQUIRED)
       .min(1, 'Code must be at least 1 characters long')
       .max(255, 'Code must be less than 255 characters long')
       .matches(
@@ -28,11 +28,11 @@ export const addChakkiSchema = () =>
       ),
     merchant: yup
       .object({
-        value: yup.string().required('Merchant is required'),
+        value: yup.string().required(ErrorMessage.REQUIRED),
         label: yup.string(),
       })
       .nullable()
-      .required('Merchant is required'),
+      .required(ErrorMessage.REQUIRED),
     isCustomerRequestAvailable: yup.boolean(),
     minOrderAmount: yup.number(),
     deliveryRangeInKms: yup.number(),
@@ -44,21 +44,30 @@ export const addChakkiSchema = () =>
       email: yup.string(),
     }),
     address: yup.object().shape({
-      addressLine1: yup
-        .string()
-        .max(255)
-        .required(localize('address_line_1_is_required')),
+      addressLine1: yup.string().max(255).required(ErrorMessage.REQUIRED),
       addressLine2: yup.string().max(255),
       addressLine3: yup.string().max(255),
       landmark: yup.string().max(255),
       mapLink: yup
         .string()
-        .required(localize('map_link_is_required'))
+        .required(ErrorMessage.REQUIRED)
         .matches(Regex.MAP_LINK, localize('invalid_map_link')),
     }),
-    selectedDays: yup
-      .array()
-      .of(yup.number())
-      .min(1, localize('minimum_1_day_required')),
+    selectedDays: yup.array().of(yup.number()).min(1, ErrorMessage.REQUIRED),
     operationalHours: yup.object(),
+  });
+
+export const addMerchantSchema = () =>
+  yup.object().shape({
+    name: yup
+      .string()
+      .required(ErrorMessage.REQUIRED)
+      .min(1, 'Name must be at least 1 characters long')
+      .max(255, 'Name must be less than 255 characters long'),
+    email: yup.string().matches(Regex.EMAIL, ErrorMessage.INVALID_EMAIL),
+    phone: yup
+      .string()
+      .trim()
+      .matches(Regex.PHONE, ErrorMessage.INVALID_PHONE)
+      .required(ErrorMessage.REQUIRED),
   });

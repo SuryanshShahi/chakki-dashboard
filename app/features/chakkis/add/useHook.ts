@@ -45,28 +45,37 @@ export interface IInitialValue extends IAddChakkiPayload {
 export function useHook(chakkiId?: UUID) {
   const router = useRouter();
   const [merchantOptions, setMerchantOptions] = useState<Option[]>([]);
+  const [isAddMerchant, setIsAddMerchant] = useState<{
+    name: string;
+    phone: string;
+    email: string;
+  } | null>(null);
 
-  const { data: chakki, isLoading: isLoadingChakkis } = useQuery<{
+  const { data: chakki, isLoading: isLoadingChakkiDetails } = useQuery<{
     data: IChakkiDetails;
   }>({
     queryKey: ['chakkiDetails', chakkiId],
     queryFn: () => getChakkiDetails(chakkiId as UUID),
     enabled: !!chakkiId,
-    refetchOnMount: true,
   });
   const chakkiDetails = chakki?.data;
 
+  const [searchKey, setSearchKey] = useState<string | undefined>(undefined);
   const {
     data: merchantList,
-    isLoading: isLoadingMerchants,
-    refetch: refetchMerchants,
+    isFetching: isFetchMerchants,
+    refetch: refetchMerchant,
   } = useQuery<{
     data: IUser[];
   }>({
-    queryKey: ['activeMerchantList'],
-    queryFn: () => getActiveMerchantList(1, 10, undefined),
+    queryKey: ['activeMerchantList', searchKey],
+    queryFn: () =>
+      getActiveMerchantList(
+        1,
+        10,
+        searchKey ? btoa(JSON.stringify({ q: searchKey as string })) : undefined
+      ),
     enabled: !chakkiId,
-    refetchOnMount: true,
   });
 
   const initialValues: IInitialValue = {
@@ -126,7 +135,7 @@ export function useHook(chakkiId?: UUID) {
         isAcceptingPickups: values.isAcceptingOrders,
         deliveryRangeInKms: values.deliveryRangeInKms,
         externalStoreLinks: values.externalStoreLinks,
-        merchantId: values.merchant?.value as UUID,
+        merchantId: (values.merchant?.value as UUID) || values?.merchantId,
       };
       if (chakkiId) {
         updateChakkiMutation({
@@ -141,6 +150,28 @@ export function useHook(chakkiId?: UUID) {
   });
 
   const { errors, values } = formikProps;
+
+  const determineSearchType = (value: string) => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phonePattern = /^\+?[0-9\s-]{7,15}$/;
+    if (emailPattern.test(value)) {
+      return 'email';
+    } else if (phonePattern.test(value)) {
+      return 'phone';
+    } else {
+      return 'name';
+    }
+  };
+
+  const onCreateNewMerchant = (key: string) => {
+    const searchType = determineSearchType(key);
+    const defaultData = {
+      name: searchType === 'name' ? key : '',
+      email: searchType === 'email' ? key : '',
+      phone: searchType === 'phone' ? key : '',
+    };
+    setIsAddMerchant(defaultData);
+  };
 
   const { mutate: addChakkiImagesMutation } = useMutation({
     mutationFn: (data: { chakkiId: UUID; formData: any }) =>
@@ -238,42 +269,44 @@ export function useHook(chakkiId?: UUID) {
 
   const loadMerchantOptions = useMemo(
     () =>
-      debounce(async (searchKey: string) => {
-        const res = await refetchMerchants();
-        const newOptions = (res?.data?.data || [])?.map((m) => ({
-          label: `${m.name} (${m.phone})`,
-          value: m.id,
-        }));
-
-        setMerchantOptions([
-          ...newOptions,
-          {
-            label: `+ Add "${searchKey}"`,
-            value: 'add-new',
-          },
-        ]);
+      debounce((key: string) => {
+        setSearchKey(key);
       }, 400),
-    [refetchMerchants, setMerchantOptions]
+    []
   );
 
   useEffect(() => {
-    if (!merchantList?.data?.length) return;
-    const options = merchantList.data.map((m) => ({
-      label: `${m.name} (${m.phone})`,
-      value: m.id,
-    }));
-    setMerchantOptions(options);
-  }, [merchantList]);
+    const newOptions =
+      merchantList?.data.map((m) => ({
+        label: `${m.name} (${m.phone})`,
+        value: m.id,
+      })) || [];
+
+    console.log({ newOptions });
+
+    setMerchantOptions([
+      ...newOptions,
+      {
+        label: `+ Add ${searchKey || ''}`,
+        value: 'add-new',
+      },
+    ]);
+  }, [merchantList, searchKey]);
 
   const isBtnDisabled = Object.values(errors).length;
 
   return {
-    isLoadingChakkis,
+    isLoadingChakkiDetails,
     merchantList,
     isBtnDisabled,
-    isLoadingMerchants,
+    isFetchMerchants,
     formikProps,
     merchantOptions,
+    isAddMerchant,
     loadMerchantOptions,
+    setIsAddMerchant,
+    onCreateNewMerchant,
+    setMerchantOptions,
+    refetchMerchant,
   };
 }
