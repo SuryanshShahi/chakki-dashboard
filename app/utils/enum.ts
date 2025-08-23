@@ -5,6 +5,13 @@ export const localStorageKeys = {
 };
 
 export enum Status {
-  PENDING = "pending",
-  APPROVED = "approved",
+  DRAFT = "draft",
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
+
+export enum FileTypes {
+  JPEG = "TYPE_IMAGE_JPEG",
+  PNG = "TYPE_IMAGE_PNG",
+  PDF = "TYPE_PDF",
 }

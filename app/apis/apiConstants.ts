@@ -1,6 +1,29 @@
+import { UUID } from 'crypto';
+import { createUrl } from '../utils/constants';
+
 export const API_CONSTANTS = {
-  requestOtp: "/auth/request-otp",
-  registerDevice: "/auth/device",
-  verifyOtp: "/auth/verify-otp",
-  refreshToken: "/auth/refresh",
+  requestOtp: '/auth/request-otp',
+  registerDevice: '/auth/device',
+  verifyOtp: '/auth/verify-otp',
+  refreshToken: '/auth/refresh',
+  getChakkiList: (filters?: string, page?: number, limit?: number) =>
+    createUrl('/admin/chakki', {
+      filters,
+      limit,
+      page,
+    }),
+  getChakkiDetails: (chakkiId: UUID) => `/admin/chakki/${chakkiId}`,
+  addChakki: '/admin/chakki',
+  addChakkiAddress: (chakkiId: UUID) => `/admin/chakki/${chakkiId}/address`,
+  addChakkiImage: (chakkiId: UUID) => `/admin/chakki/${chakkiId}/image`,
+  updateChakki: (chakkiId: UUID) => `/admin/chakki/${chakkiId}`,
+  deleteChakki: (chakkiId: UUID) => `/admin/chakki/${chakkiId}`,
+  updateChakkiStatus: (chakkiId: UUID) => `/admin/chakki/${chakkiId}/status`,
+  addMerchant: `/admin/merchant`,
+  getActiveMerchantList: (page?: number, limit?: number, filters?: string) =>
+    createUrl(`/admin/merchant/list`, {
+      filters,
+      limit,
+      page,
+    }),
 };

@@ -4,7 +4,7 @@ import Button from "@/app/shared/buttons/Button";
 import CardWrapper from "@/app/shared/cards/CardWrapper";
 import Divider from "@/app/shared/Divider";
 import DownloadApp from "@/app/shared/DownloadApp";
-import Heading from "@/app/shared/Heading";
+import Heading from "@/app/shared/heading/Heading";
 import Img from "@/app/shared/Img";
 import ConfirmationModal from "@/app/shared/modal/ConfirmationModal";
 import UserCard from "@/app/shared/UserCard";
@@ -57,9 +57,9 @@ const SideBar = ({
           <Link href="/home" className="flex items-center gap-x-2">
             <Img
               height={32}
-              width={47}
+              width={32}
               alt=""
-              src="/images/appStore.png"
+              src="/images/logo.png"
               className="max-h-8"
               isLocal
             />
@@ -68,7 +68,7 @@ const SideBar = ({
               className="text-xl line-clamp-1"
               variant="primary"
             >
-              ChakkiWala
+              Chakkiwala
             </Heading>
           </Link>
           {Number(width) <= 1024 && (

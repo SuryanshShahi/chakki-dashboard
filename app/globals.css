@@ -44,4 +44,28 @@ body * {
   h6 {
     @apply text-2xl font-bold;
   }
+  .phoneSearchInput {
+    @apply !h-[30px] !w-[97%] !pl-[10px] !bg-white;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  .phoneInput:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  .react-tel-input {
+    margin-left: -8px;
+  }
+}
+.modalLogo {
+  backdrop-filter: blur(2px);
+  background-color: rgba(235, 235, 235, 0.6);
+  border-radius: 10px;
+  opacity: 1;
+}
+
+.react-time-picker__wrapper {
+  border: none !important;
 }
