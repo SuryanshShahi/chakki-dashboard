@@ -91,7 +91,6 @@ export function AddChakki() {
             value={values.name}
             errorMessage={errors.name && touched?.name ? errors.name : ''}
             type='text'
-            wrapperClass='border p-2 rounded'
           />
           <InputField
             required
@@ -105,7 +104,6 @@ export function AddChakki() {
             value={values.code}
             errorMessage={errors.code && touched?.code ? errors.code : ''}
             type='text'
-            wrapperClass='border p-2 rounded'
           />
           <AsyncCreatableDropDown
             name='merchant'
@@ -155,7 +153,6 @@ export function AddChakki() {
                 : ''
             }
             type='number'
-            wrapperClass='border p-2 rounded'
           />
           <InputField
             label={localize('delivery_range')}
@@ -171,7 +168,6 @@ export function AddChakki() {
                 : ''
             }
             type='number'
-            wrapperClass='border p-2 rounded'
           />
           <div className='space-y-2'>
             <InputField
@@ -248,7 +244,6 @@ export function AddChakki() {
                     : ''
                 }
                 type='text'
-                wrapperClass='border p-2 rounded'
               />
               <InputField
                 label={'Helper Phone'}
@@ -268,7 +263,6 @@ export function AddChakki() {
                     : ''
                 }
                 type='text'
-                wrapperClass='border p-2 rounded'
               />
               <InputField
                 label={'Helper Email'}
@@ -288,7 +282,6 @@ export function AddChakki() {
                     : ''
                 }
                 type='text'
-                wrapperClass='border p-2 rounded'
               />
             </div>
           )}
@@ -398,7 +391,6 @@ export function AddChakki() {
                 : ''
             }
             type='text'
-            wrapperClass='border p-2 rounded'
           />
           <InputField
             label={localize('address_line_2')}
@@ -413,7 +405,6 @@ export function AddChakki() {
                 : ''
             }
             type='text'
-            wrapperClass='border p-2 rounded'
           />
           <InputField
             label={localize('address_line_3')}
@@ -428,7 +419,6 @@ export function AddChakki() {
                 : ''
             }
             type='text'
-            wrapperClass='border p-2 rounded'
           />
           <InputField
             label={localize('landmark')}
@@ -443,7 +433,6 @@ export function AddChakki() {
                 : ''
             }
             type='text'
-            wrapperClass='border p-2 rounded'
           />
           <InputField
             required
@@ -459,7 +448,6 @@ export function AddChakki() {
                 : ''
             }
             type='text'
-            wrapperClass='border p-2 rounded col-span-2'
             helperText={
               values.address?.mapLink
                 ? `Latitude: ${

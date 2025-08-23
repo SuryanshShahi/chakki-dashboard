@@ -7,7 +7,7 @@ import { IUserCard } from '@/app/shared/UserCard';
 import Button from '@/app/shared/buttons/Button';
 import HeadingWithBtn from '@/app/shared/heading/HeadingWithBtn';
 import Table from '@/app/shared/table';
-import { IAction, IMenuItem } from '@/app/shared/table/types';
+import { IAction, IMenuItem, ISelected } from '@/app/shared/table/types';
 import { SvgTrash } from '@/app/svgs';
 import { capitalize } from '@/app/utils/constants';
 import { SvgEdit, SvgLocation } from '@/app/utils/svgs';
@@ -37,8 +37,9 @@ const Chakkis = () => {
     isLoading,
     filters,
     hasFilters,
-    setFilters,
     initialFilters,
+    statusFilters,
+    setFilters,
     deleteChakkiMutation,
     updateChakkiStatusMutation,
   } = useHook();
@@ -210,6 +211,23 @@ const Chakkis = () => {
               onClick: () =>
                 hasFilters ? setFilters(initialFilters) : router.push('/home'),
               size: 'sm',
+            },
+          }}
+          filterProps={{
+            quickFilters: statusFilters,
+            name: 'status',
+            onClick: (value: ISelected) =>
+              setFilters((p) => ({ ...p, status: value })),
+            selected: filters?.status?.value,
+            className: 'max-w-[200px] !min-w-[100px]',
+          }}
+          searchInputProps={{
+            name: 'q',
+            type: 'search',
+            placeholder: 'Search by Chakki name or code',
+            className: 'w-full text-black',
+            onChange: (e) => {
+              setFilters((p) => ({ ...p, q: e }));
             },
           }}
         />

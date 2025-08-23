@@ -13,7 +13,7 @@ const Popover = ({
   return (
     <div
       className={clsx(
-        'p-1 max-w-[175px] text-nowrap rounded-lg gap-x-1 prevent-select shadow-sm text-sm bg-white z-10 absolute right-0',
+        'p-1 min-w-[150px] text-nowrap rounded-lg gap-x-1 prevent-select shadow-sm text-sm bg-white z-10 absolute right-0',
         className
       )}
     >

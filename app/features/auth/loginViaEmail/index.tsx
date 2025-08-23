@@ -74,7 +74,6 @@ const LoginViaEmail = () => {
             value={values?.email}
             errorMessage={errors?.email && touched?.email ? errors?.email : ''}
             type='email'
-            wrapperClass='border p-2 rounded'
           />
           <Button
             btnName='Next'

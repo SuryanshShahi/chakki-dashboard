@@ -126,13 +126,7 @@ export const emptyState = {
   subtitle:
     'Your search “Landing page design” did not match any projects. Please try again.',
   icon: (
-    <Img
-      height={118}
-      width={152}
-      alt=''
-      isLocal
-      src='/images/icons/emptyState.png'
-    />
+    <Img height={118} width={152} alt='' isLocal src='/icons/emptyState.png' />
   ),
   btnProps: {
     btnName: 'Go Back',

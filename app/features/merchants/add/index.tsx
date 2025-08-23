@@ -113,7 +113,6 @@ export const AddMerchantModal = ({
           value={values.name}
           errorMessage={errors.name && touched?.name ? errors.name : ''}
           type='text'
-          wrapperClass='border p-2 rounded'
         />
         <InputField
           label={localize('email')}
@@ -123,7 +122,6 @@ export const AddMerchantModal = ({
           value={values.email}
           errorMessage={errors.email && touched?.email ? errors.email : ''}
           type='text'
-          wrapperClass='border p-2 rounded'
         />
       </div>
       <div className='py-4 px-6 w-full flex items-center space-x-3'>

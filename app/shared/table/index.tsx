@@ -123,7 +123,7 @@ const Table = ({
                 {isActive === id && Boolean(e?.menuItems?.length) && (
                   <Popover
                     menuItems={e?.menuItems}
-                    className='animate-slideLeft top-8 !right-0 !z-0'
+                    className='animate-slideLeft top-8 !right-0 !z-2'
                   />
                 )}
               </Fragment>
