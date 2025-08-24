@@ -5,7 +5,7 @@ import {
   IAddChakkiAddress,
   IAddChakkiPayload,
   IUpdateChakki,
-  IUpdateChakkiStatus,
+  IUpdateEntityStatus,
 } from '../features/chakkis/types';
 import { IAddMerchantPayload } from '../features/merchants/types';
 import { getCookie } from '../utils/cookies';
@@ -86,7 +86,7 @@ export const getChakkiList = async (
   limit?: number
 ) => {
   const res = await axiosInstance().get(
-    API_CONSTANTS.getChakkiList(filters, page, limit)
+    API_CONSTANTS.searchChakkiList(filters, page, limit)
   );
   return res?.data || {};
 };
@@ -117,7 +117,7 @@ export const updateChakki = async (chakkiId: UUID, body: IUpdateChakki) => {
 
 export const updateChakkiStatus = async (
   chakkiId: UUID,
-  body: IUpdateChakkiStatus
+  body: IUpdateEntityStatus
 ) => {
   const res = await axiosInstance().patch(
     API_CONSTANTS.updateChakkiStatus(chakkiId),
@@ -163,7 +163,7 @@ export const getMerchantList = async (
   limit?: number
 ) => {
   const res = await axiosInstance().get(
-    API_CONSTANTS.getChakkiList(filters, page, limit)
+    API_CONSTANTS.searchChakkiList(filters, page, limit)
   );
   return res?.data || {};
 };
@@ -177,4 +177,42 @@ export const getActiveMerchantList = async (
     API_CONSTANTS.getActiveMerchantList(page, limit, filters)
   );
   return res?.data;
+};
+
+export const searchMerchants = async (
+  filters?: string,
+  page?: number,
+  limit?: number
+) => {
+  const res = await axiosInstance().get(
+    API_CONSTANTS.searchMerchants(filters, page, limit)
+  );
+  return res?.data;
+};
+
+export const removeUserAsMerchant = async (merchantId: UUID) => {
+  const res = await axiosInstance().delete(
+    API_CONSTANTS.removeUserAsMerchant(merchantId)
+  );
+  return res?.data;
+};
+
+export const updateMerchantStatus = async (
+  merchantId: UUID,
+  body: IUpdateEntityStatus
+) => {
+  const res = await axiosInstance().patch(
+    API_CONSTANTS.updateMerchantStatus(merchantId),
+    body
+  );
+  return res?.data;
+};
+
+// --------------------------------------------------------------------------------------
+// ---------------------------------------- Misc ----------------------------------------
+// --------------------------------------------------------------------------------------
+
+export const getDashboardStats = async () => {
+  const res = await axiosInstance().get(API_CONSTANTS.getDashboardStats);
+  return res?.data?.data;
 };

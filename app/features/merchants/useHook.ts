@@ -1,16 +1,16 @@
 import {
-  deleteChakki,
-  getChakkiList,
-  updateChakkiStatus,
+  removeUserAsMerchant,
+  searchMerchants,
+  updateMerchantStatus,
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
 import { Status } from '@/app/utils/enum';
 import useDebounce from '@/app/utils/hooks/useDebounce';
+import { IMerchant, IUser } from '@/app/utils/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { UUID } from 'crypto';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { IChakkiList } from './types';
 
 const statusFilters = [
   { label: 'All', value: 'all' },
@@ -32,6 +32,12 @@ export const useHook = () => {
   const [filters, setFilters] = useState(initialFilters);
   const [paginationData, setPaginationData] = useState(initialPagination);
 
+  const [isAddMerchant, setIsAddMerchant] = useState<{
+    name: string;
+    phone: string;
+    email: string;
+  } | null>(null);
+
   useEffect(() => {
     setPaginationData(initialPagination);
   }, [filters]);
@@ -46,20 +52,15 @@ export const useHook = () => {
   const hasFilters = Object.values(modifiedFilters).filter(Boolean).length;
 
   const {
-    data: chakkiList = { data: [] },
-    isLoading,
-    refetch: refetchChakkis,
+    data: merchantList = { data: [] },
+    isFetching: isFetchingMerchants,
+    refetch: refetchMerchants,
   } = useQuery<{
-    data: IChakkiList[];
+    data: IMerchant[];
   }>({
-    queryKey: [
-      'chakkiList',
-      modifiedFilters,
-      paginationData?.limit,
-      paginationData.page,
-    ],
+    queryKey: ['searchMerchantList', modifiedFilters, paginationData],
     queryFn: () =>
-      getChakkiList(
+      searchMerchants(
         typeof window !== 'undefined' && hasFilters
           ? window.btoa(JSON.stringify(modifiedFilters))
           : undefined,
@@ -68,12 +69,12 @@ export const useHook = () => {
       ),
   });
 
-  const { mutate: deleteChakkiMutation } = useMutation({
-    mutationFn: (chakkiId: UUID) => deleteChakki(chakkiId),
+  const { mutate: removeAsMerchantMutation } = useMutation({
+    mutationFn: (merchantId: UUID) => removeUserAsMerchant(merchantId),
     onSuccess: () => {
-      refetchChakkis();
+      refetchMerchants();
       showToast({
-        title: 'Chakki Deleted Successfully',
+        title: 'Merchant removed successfully',
         type: 'success',
       });
     },
@@ -86,15 +87,15 @@ export const useHook = () => {
     onSettled: () => {},
   });
 
-  const { mutate: updateChakkiStatusMutation } = useMutation({
-    mutationFn: (data: { chakkiId: UUID; status: string }) =>
-      updateChakkiStatus(data.chakkiId, {
+  const { mutate: updateMerchantStatusMutation } = useMutation({
+    mutationFn: (data: { merchantId: UUID; status: string }) =>
+      updateMerchantStatus(data.merchantId, {
         status: data.status,
       }),
     onSuccess: () => {
-      refetchChakkis();
+      refetchMerchants();
       showToast({
-        title: 'Updated Chakki Status',
+        title: 'Updated Merchant Status',
         type: 'success',
       });
     },
@@ -109,14 +110,17 @@ export const useHook = () => {
 
   return {
     router,
-    chakkiList,
-    isLoading,
+    merchantList,
+    isFetchingMerchants,
     filters,
     hasFilters,
     initialFilters,
     statusFilters,
+    isAddMerchant,
+    setIsAddMerchant,
     setFilters,
-    deleteChakkiMutation,
-    updateChakkiStatusMutation,
+    removeAsMerchantMutation,
+    updateMerchantStatusMutation,
+    refetchMerchants
   };
 };

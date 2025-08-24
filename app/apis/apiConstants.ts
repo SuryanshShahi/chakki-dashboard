@@ -6,7 +6,8 @@ export const API_CONSTANTS = {
   registerDevice: '/auth/device',
   verifyOtp: '/auth/verify-otp',
   refreshToken: '/auth/refresh',
-  getChakkiList: (filters?: string, page?: number, limit?: number) =>
+  getDashboardStats: '/admin/common/stats',
+  searchChakkiList: (filters?: string, page?: number, limit?: number) =>
     createUrl('/admin/chakki', {
       filters,
       limit,
@@ -26,4 +27,13 @@ export const API_CONSTANTS = {
       limit,
       page,
     }),
+  searchMerchants: (filters?: string, page?: number, limit?: number) =>
+    createUrl('/admin/merchant', {
+      filters,
+      limit,
+      page,
+    }),
+  removeUserAsMerchant: (merchantId: UUID) => `/admin/merchant/${merchantId}`,
+  updateMerchantStatus: (merchantId: UUID) =>
+    `/admin/merchant/${merchantId}/status`,
 };

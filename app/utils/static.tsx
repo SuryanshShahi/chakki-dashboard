@@ -31,6 +31,13 @@ export const drawerMenuItems = (modules?: string[]): IDrawerItem[] => {
       isVisible: true,
     },
     {
+      title: 'Merchants',
+      icon: () => <></>,
+      slug: 'merchants',
+      disabled: false,
+      isVisible: true,
+    },
+    {
       title: 'Orders',
       icon: () => <></>,
       slug: 'orders',

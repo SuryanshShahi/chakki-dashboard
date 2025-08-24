@@ -51,7 +51,7 @@ export interface IAddChakkiAddress {
 export interface IUpdateChakki
   extends Omit<IAddChakkiPayload, 'merchantId' | 'addressId'> {}
 
-export interface IUpdateChakkiStatus {
+export interface IUpdateEntityStatus {
   status: string;
 }
 

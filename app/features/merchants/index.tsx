@@ -10,18 +10,18 @@ import Table from '@/app/shared/table';
 import { IAction, IMenuItem, ISelected } from '@/app/shared/table/types';
 import { SvgTrash } from '@/app/svgs';
 import { capitalize } from '@/app/utils/constants';
-import { SvgEdit, SvgLocation } from '@/app/utils/svgs';
+import { SvgEdit } from '@/app/utils/svgs';
 import { ITableHeading } from '@/app/utils/types';
 import { tw } from '@/tailwind.config';
 import { GiNightSleep } from 'react-icons/gi';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { TiTick } from 'react-icons/ti';
+import { AddMerchantModal } from './add';
 import { useHook } from './useHook';
 
 const headings: ITableHeading[] = [
-  { title: 'Chakki', variant: 'userCard' },
-  { title: 'Address', variant: 'userCard' },
-  { title: 'Owner', variant: 'userCard' },
+  { title: 'Merchant', variant: 'userCard' },
+  { title: 'Chakkis', variant: 'chip', maxLimit: 2 },
   { title: 'Status', variant: 'chip' },
   {
     title: 'Action',
@@ -30,77 +30,52 @@ const headings: ITableHeading[] = [
   },
 ];
 
-const Chakkis = () => {
+const Merchants = () => {
   const {
     router,
-    chakkiList,
-    isLoading,
+    merchantList,
+    isFetchingMerchants,
     filters,
     hasFilters,
     initialFilters,
     statusFilters,
+    isAddMerchant,
+    setIsAddMerchant,
     setFilters,
-    deleteChakkiMutation,
-    updateChakkiStatusMutation,
+    removeAsMerchantMutation,
+    updateMerchantStatusMutation,
+    refetchMerchants,
   } = useHook();
 
   const tableData: {
-    chakki: IUserCard[];
-    address: IUserCard[];
-    status: (IChip | undefined)[];
     merchant: IUserCard[];
+    chakkis: IChip[][];
+    status: (IChip | undefined)[];
     actions: IAction[][];
   } = {
-    chakki: chakkiList?.data?.map((e) => ({
+    merchant: merchantList?.data?.map((e) => ({
       title: e.name,
-      subtitle: '#' + e.code,
-      type: 'info',
-      styleTitle: 'capitalize !font-normal',
-      image: e?.photos?.[0]?.url,
-      showInitials: true,
-      styleImage: 'min-w-10 object-cover',
-    })),
-    address: chakkiList?.data?.map((e) => ({
-      title: e.address
-        ? `${e.address?.addressLine1} ${e.address?.addressLine2 || ''}`
-        : '--',
-      subtitle: e.address?.landmark ? `Near ${e.address?.landmark}` : '',
-      type: 'info',
-      styleTitle: 'capitalize !font-normal',
-      children: e?.address?.longitude && e?.address?.latitude && (
-        <div
-          onClick={() => {
-            window.open(
-              `https://www.google.com/maps?q=${e.address.latitude},${e.address.longitude}`,
-              '_blank'
-            );
-          }}
-          style={{ cursor: 'pointer' }} // to show it's clickable
-        >
-          <SvgLocation
-            height={18}
-            width={18}
-            stroke={tw.textColor['primary']}
-            // className='!rounded-full'
-          />
-        </div>
-      ),
-    })),
-    merchant: chakkiList?.data?.map((e) => ({
-      title: e.merchant.name,
-      subtitle: e.merchant.phone,
+      subtitle: e.phone,
       type: 'info',
       styleTitle: 'capitalize !font-normal',
       showInitials: true,
     })),
-    status: chakkiList?.data?.map((e) => ({
+    chakkis: merchantList?.data?.map(
+      (item) =>
+        item?.chakkis?.map((e) => ({
+          title: e?.name,
+          variant: 'gray',
+          className: '!pr-2',
+        })) ?? []
+    ),
+    status: merchantList?.data?.map((e) => ({
       title: capitalize(e.status),
       className: 'rounded-full !px-[10px]',
       variant: getVariant(e?.status),
       type: 'tag',
       size: 'sm',
     })),
-    actions: chakkiList?.data?.map((item) => [
+    actions: merchantList?.data?.map((item) => [
       {
         btn: 'menu',
         menuItems: [
@@ -129,8 +104,8 @@ const Chakkis = () => {
             ),
             text: 'Activate',
             onClick: () => {
-              updateChakkiStatusMutation({
-                chakkiId: item.id,
+              updateMerchantStatusMutation({
+                merchantId: item.id,
                 status: 'active',
               });
             },
@@ -146,8 +121,8 @@ const Chakkis = () => {
             ),
             text: 'Inactivate',
             onClick: () => {
-              updateChakkiStatusMutation({
-                chakkiId: item.id,
+              updateMerchantStatusMutation({
+                merchantId: item.id,
                 status: 'inactive',
               });
             },
@@ -161,7 +136,7 @@ const Chakkis = () => {
               />
             ),
             text: 'Delete',
-            onClick: () => deleteChakkiMutation(item?.id),
+            onClick: () => removeAsMerchantMutation(item?.id),
           },
         ].filter(Boolean) as IMenuItem[],
       },
@@ -169,12 +144,22 @@ const Chakkis = () => {
   };
 
   return (
-    <PageWrapper breadCrumbs={[{ label: 'Chakkis' }]}>
+    <PageWrapper breadCrumbs={[{ label: 'Merchants' }]}>
       <div className='space-y-6'>
+        <AddMerchantModal
+          isOpen={isAddMerchant !== null}
+          close={() => setIsAddMerchant(null)}
+          size='md'
+          onAddMerchant={() => {
+            setIsAddMerchant(null);
+            refetchMerchants();
+          }}
+        />
+
         <div className='space-y-1'>
           <HeadingWithBtn
             headingProps={{
-              children: 'Chakkis',
+              children: 'Merchants',
               className: '!text-3xl',
             }}
           >
@@ -183,21 +168,29 @@ const Chakkis = () => {
               icon={<IoIosAddCircleOutline />}
               btnName='Add'
               iconFirst
-              onClick={() => router.push('/chakkis/add')}
+              onClick={() => {
+                setIsAddMerchant({
+                  email: '',
+                  name: '',
+                  phone: '',
+                });
+              }}
             />
           </HeadingWithBtn>
-          <Text variant='tertiary'>Chakkis across the system</Text>
+          <Text variant='tertiary'>Merchants who own Chakkis</Text>
         </div>
         <Divider variant='secondary' />
         <Table
-          title={'List of Chakkis'}
+          title={'List of Merchants'}
           headings={headings}
           data={tableData}
           ids={
-            isLoading ? null : chakkiList?.data?.map((item) => item?.id || '')
+            isFetchingMerchants
+              ? null
+              : merchantList?.data?.map((item) => item?.id || '')
           }
           onRowClick={(id) => {
-            router.push(`/chakkis/${id}`);
+            //
           }}
           emptyState={{
             title: 'No data found',
@@ -224,7 +217,7 @@ const Chakkis = () => {
           searchInputProps={{
             name: 'q',
             type: 'search',
-            placeholder: 'Search by Chakki name or code',
+            placeholder: 'Search by Merchant name, email or code',
             className: 'w-full text-black',
             onChange: (e) => {
               setFilters((p) => ({ ...p, q: e }));
@@ -236,7 +229,7 @@ const Chakkis = () => {
   );
 };
 
-export default Chakkis;
+export default Merchants;
 
 const getVariant = (status: string) => {
   if (status === 'draft') {

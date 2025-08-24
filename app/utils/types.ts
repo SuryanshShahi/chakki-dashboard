@@ -1,5 +1,6 @@
 import { UUID } from 'crypto';
 import { ReactNode } from 'react';
+import { IChakkiList } from '../features/chakkis/types';
 import { IButton } from '../shared/buttons/Button';
 
 export interface IEmptyState {
@@ -44,4 +45,22 @@ export interface IUser {
   email: string;
   name: string;
   phone: string;
+}
+
+export interface IMerchant extends IUser {
+  userId: string;
+  status: string;
+  photo: {
+    url: string;
+  };
+  chakkis: Pick<IChakkiList, 'id' | 'name' | 'code' | 'status'>[];
+}
+
+export interface IDashboardStats {
+  activeChakkis: number;
+  activeMerchants: number;
+  activeCustomers: number;
+  activeProducts: number;
+  averageRatings: number;
+  deliveredOrders: number;
 }

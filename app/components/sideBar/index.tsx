@@ -168,7 +168,7 @@ const SideBar = ({
           <DownloadApp />
           <UserCard
             title={"You"}
-            subtitle="Employee"
+            subtitle="Admin"
             styleSubtitle="!text-xs !text-tertiary"
             showInitials
             className="px-6"
