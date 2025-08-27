@@ -12,7 +12,7 @@ import { ChakkiOverview } from './tabs/overview';
 import { ChakkiProducts } from './tabs/products';
 import { useHook } from './useHook';
 
-export const ChakkiDetails = ({ id }: { id: UUID }) => {
+export const ProductDetails = ({ id }: { id: UUID }) => {
   const { chakkiDetails, isLoadingChakkis } = useHook({ chakkiId: id });
   console.log({ chakkiDetails });
 
@@ -58,8 +58,7 @@ export const ChakkiDetails = ({ id }: { id: UUID }) => {
             size: 'sm',
             icon: <IoIosAddCircleOutline />,
             iconFirst: true,
-            onClick: () =>
-              router.push(`/chakkis/${chakkiDetails?.id}/products/add`),
+            onClick: () => {},
           },
         ]}
       >

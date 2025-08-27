@@ -1,6 +1,7 @@
 import { localize } from '@/i18n/dictionaries';
 import * as yup from 'yup';
 import { ErrorMessage, Regex } from './static';
+// todo - refactor error messages
 
 export const loginWithEmailSchema = () =>
   yup.object().shape({
@@ -70,4 +71,38 @@ export const addMerchantSchema = () =>
       .trim()
       .matches(Regex.PHONE, ErrorMessage.INVALID_PHONE)
       .required(ErrorMessage.REQUIRED),
+  });
+
+export const addProductSchema = () =>
+  yup.object().shape({
+    name: yup
+      .string()
+      .required(ErrorMessage.REQUIRED)
+      .min(1, 'Name must be at least 1 characters long')
+      .max(255, 'Name must be less than 255 characters long'),
+    code: yup
+      .string()
+      .required(ErrorMessage.REQUIRED)
+      .min(1, 'Code must be at least 1 characters long')
+      .max(255, 'Code must be less than 255 characters long')
+      .matches(
+        Regex.ALPHANUMERIC_AND_DASHES,
+        'Code must contain only letters, numbers, and dashes'
+      ),
+    description: yup
+      .string()
+      .required(ErrorMessage.REQUIRED)
+      .min(1, 'Description must be at least 1 characters long')
+      .max(500, 'Description must be less than 500 characters long'),
+    takeCustomerRequests: yup.boolean(),
+    pricePerUnit: yup.number().required(ErrorMessage.REQUIRED),
+    measurementUnit: yup
+      .object({
+        value: yup.string().required(ErrorMessage.REQUIRED),
+        label: yup.string(),
+      })
+      .nullable()
+      .required(ErrorMessage.REQUIRED),
+    externalStoreLinks: yup.array().of(yup.string()),
+    link: yup.string().matches(Regex.URL, localize('invalid_url')),
   });

@@ -64,3 +64,7 @@ export interface IDashboardStats {
   averageRatings: number;
   deliveredOrders: number;
 }
+
+export interface IUpdateEntityStatus {
+  status: string;
+}

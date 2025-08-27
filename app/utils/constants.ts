@@ -129,3 +129,15 @@ export function combine(...args: (string | undefined | null)[]): string {
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+// todo - survey and get actual units
+export const MEASUREMENT_UNITS = [
+  {
+    label: 'Kg',
+    value: 'kg',
+  },
+  {
+    label: 'Ton',
+    value: 'ton',
+  },
+];

@@ -150,10 +150,7 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
         {required && <span className='text-xs text-red-600'> *</span>}
       </div>
       <div
-        className={clsx(
-          'app-select-wrapper min-h-10 min-w-[200px] text-base relative',
-          className
-        )}
+        className={clsx('min-h-10 min-w-[200px] text-base relative', className)}
         role='presentation'
       >
         <Select

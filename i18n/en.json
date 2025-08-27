@@ -23,5 +23,12 @@
   "landmark": "Landmark",
   "enter_landmark": "Enter landmark",
   "enter_merchant_name": "Enter merchant name",
-  "enter_merchant_email": "Enter merchant email"
+  "enter_merchant_email": "Enter merchant email",
+  "enter_product_name": "Enter product name",
+  "enter_product_code": "Enter product code",
+  "price_per_unit": "Price per Unit",
+  "enter_price_per_unit": "Enter Price per Unit",
+  "description": "Description",
+  "enter_product_description": "Enter product description",
+  "enter_measurement_unit": "Enter measurement unit"
 }

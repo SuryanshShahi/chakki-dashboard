@@ -1,11 +1,11 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-unstable-nested-components */
-import React, { useEffect, useRef } from "react";
-import PropTypes from "prop-types";
-import { useController } from "react-hook-form";
-import Image from "next/image";
-import useInteractiveStates from "src/hooks/interactiveStates";
-import { AsyncPaginate } from "react-select-async-paginate";
+import React, { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { useController } from 'react-hook-form';
+import Image from 'next/image';
+import useInteractiveStates from 'src/hooks/interactiveStates';
+import { AsyncPaginate } from 'react-select-async-paginate';
 
 function AsyncDropdownField({
   control,
@@ -33,7 +33,7 @@ function AsyncDropdownField({
   } = useController({
     name,
     control,
-    defaultValue: "",
+    defaultValue: '',
   });
 
   const checkValueExists = (value, options) => {
@@ -50,7 +50,7 @@ function AsyncDropdownField({
   const getValueWithFixed = (isMulti, options) => {
     if (isMulti) {
       // value check for mulltiselect dropdown
-      if (value !== null && value !== "" && value !== undefined) {
+      if (value !== null && value !== '' && value !== undefined) {
         const arr =
           value?.length > 0
             ? value?.map((item) => {
@@ -64,7 +64,7 @@ function AsyncDropdownField({
                     icon: available?.icon,
                   };
                 }
-                return "";
+                return '';
               })
             : [];
         return arr;
@@ -73,7 +73,7 @@ function AsyncDropdownField({
     // value check for single value select dropdown
     // check if selected value exist in the options list
     const available =
-      value !== null && value !== ""
+      value !== null && value !== ''
         ? checkValueExists(value.value, options)
         : false;
     if (available) {
@@ -93,14 +93,14 @@ function AsyncDropdownField({
   useEffect(() => {
     // eslint-disable-next-line no-unused-expressions
     removeCat &&
-      getRef.current.props.name === "category" &&
+      getRef.current.props.name === 'category' &&
       getRef.current.select.clearValue();
   }, [getRef, removeCat]);
 
   const onChangeValue = (newValue, actionMeta) => {
     if (
-      actionMeta.action === "remove-value" || // condition used fixed value should not be popped and removed
-      actionMeta.action === "pop-value"
+      actionMeta.action === 'remove-value' || // condition used fixed value should not be popped and removed
+      actionMeta.action === 'pop-value'
     ) {
       if (
         styles?.multiValueRemove !== undefined &&
@@ -127,14 +127,14 @@ function AsyncDropdownField({
       const searchLower = search.toLowerCase();
 
       filteredOptions = options.filter(({ label }) =>
-        label.toLowerCase().includes(searchLower),
+        label.toLowerCase().includes(searchLower)
       );
     }
 
     const hasMore = filteredOptions.length > prevOptions.length + 20;
     const slicedOptions = filteredOptions.slice(
       prevOptions.length,
-      prevOptions.length + 20,
+      prevOptions.length + 20
     );
 
     return {
@@ -145,23 +145,23 @@ function AsyncDropdownField({
 
   return (
     <div
-      className={`app-select-wrapper min-h-10 md:text-sm lg:text-base ${
+      className={`min-h-10 md:text-sm lg:text-base ${
         image
-          ? "app-select-wrapper h-10 md:text-sm lg:text-base flex items-center md:space-x-4"
-          : ""
-      } ${name?.replace(/[[\].]+/g, "_")}`}
-      role="presentation"
+          ? 'h-10 md:text-sm lg:text-base flex items-center md:space-x-4'
+          : ''
+      } ${name?.replace(/[[\].]+/g, '_')}`}
+      role='presentation'
     >
       {image ? (
         <Image
           width={50}
           height={50}
-          src="/icons/location.svg"
-          alt=""
-          className="h-4 absolute left-7 md:left-32 z-10"
+          src='/icons/location.svg'
+          alt=''
+          className='h-4 absolute left-7 md:left-32 z-10'
         />
       ) : (
-        ""
+        ''
       )}
       <AsyncPaginate
         ref={getRef}
@@ -170,13 +170,13 @@ function AsyncDropdownField({
         minMenuHeight={180}
         maxMenuHeight={200}
         className={`dropdown-container capitalize block w-full text-base bg-white ${
-          isDisabled ? "px-0" : "px-4"
+          isDisabled ? 'px-0' : 'px-4'
         } border-[0.4px] border-gray-400 rounded-lg text-sm focus-within:outline-none ${
           error && lostFocus
-            ? "text-red"
-            : (value && lostFocus && "border ") || ""
+            ? 'text-red'
+            : (value && lostFocus && 'border ') || ''
         } shadow-none disabled:bg-disabled`}
-        classNamePrefix="app-select"
+        classNamePrefix='app-select'
         isMulti={isMulti}
         isDisabled={isDisabled}
         isClearable={isClearable}
@@ -185,11 +185,11 @@ function AsyncDropdownField({
         noOptionsMessage={() =>
           value && value.length >= max && max !== null
             ? `You can select up to ${max} options only`
-            : emptyMessage || "No options available"
+            : emptyMessage || 'No options available'
         }
         getOptionLabel={(option) =>
           !isSearch ? (
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <div>{option.icon}</div>
               <span style={{ marginLeft: 8 }}>{option.label}</span>
             </div>
@@ -208,7 +208,7 @@ function AsyncDropdownField({
         onBlur={onBlur}
         id={`${datatestid}`}
       />
-      <div className="absolute inset-y-0 flex items-center pointer-events-none right-10" />
+      <div className='absolute inset-y-0 flex items-center pointer-events-none right-10' />
     </div>
   );
 }
@@ -229,7 +229,7 @@ AsyncDropdownField.propTypes = {
 };
 
 AsyncDropdownField.defaultProps = {
-  placeholder: "Select...",
+  placeholder: 'Select...',
   options: [],
   isMulti: false,
   isDisabled: false,
@@ -238,7 +238,7 @@ AsyncDropdownField.defaultProps = {
   onChangeDropdown: () => {},
   styles: {},
   isSearch: true,
-  menuPlacement: "auto",
+  menuPlacement: 'auto',
 };
 
 export default AsyncDropdownField;

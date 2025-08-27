@@ -1,15 +1,16 @@
 import axios from 'axios';
 import { UUID } from 'crypto';
 import { IRequestOtp, IVerifyOtp } from '../features/auth/types';
+import { IAddProductPayload } from '../features/chakkis/details/products/types';
 import {
   IAddChakkiAddress,
   IAddChakkiPayload,
   IUpdateChakki,
-  IUpdateEntityStatus,
 } from '../features/chakkis/types';
 import { IAddMerchantPayload } from '../features/merchants/types';
 import { getCookie } from '../utils/cookies';
 import { getLocalItem } from '../utils/localstorage';
+import { IUpdateEntityStatus } from '../utils/types';
 import { API_CONSTANTS } from './apiConstants';
 import axiosInstance from './axiosInstance';
 
@@ -144,6 +145,52 @@ export const addChakkiImages = async (chakkiId: UUID, formData: any) => {
 export const getChakkiDetails = async (chakkiId: UUID) => {
   const res = await axiosInstance().get(
     API_CONSTANTS.getChakkiDetails(chakkiId)
+  );
+  return res?.data?.data;
+};
+
+// --------------------------------------------------------------------------------------
+// ---------------------------------------- Products ----------------------------------------
+// --------------------------------------------------------------------------------------
+
+export const getProductDetails = async (chakkiId: UUID, productId: UUID) => {
+  const res = await axiosInstance().get(
+    API_CONSTANTS.getProductDetails(chakkiId, productId)
+  );
+  return res?.data?.data;
+};
+
+export const addProduct = async (chakkiId: UUID, body: IAddProductPayload) => {
+  const res = await axiosInstance().post(API_CONSTANTS.addProduct(chakkiId), {
+    ...body,
+    // todo - remove chakkiId from body
+    chakkiId,
+  });
+  return res?.data;
+};
+
+export const addProductImages = async (
+  chakkiId: UUID,
+  productId: UUID,
+  formData: any
+) => {
+  // todo - change this
+  const res = await axiosInstance().post(
+    API_CONSTANTS.addChakkiImage(chakkiId),
+    formData
+  );
+  return res?.data;
+};
+
+export const updateProduct = async (
+  chakkiId: UUID,
+  productId: UUID,
+  body: IUpdateChakki
+) => {
+  // todo - change this
+  const res = await axiosInstance().post(
+    API_CONSTANTS.updateChakki(chakkiId),
+    body
   );
   return res?.data;
 };

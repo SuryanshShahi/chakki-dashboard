@@ -36,4 +36,8 @@ export const API_CONSTANTS = {
   removeUserAsMerchant: (merchantId: UUID) => `/admin/merchant/${merchantId}`,
   updateMerchantStatus: (merchantId: UUID) =>
     `/admin/merchant/${merchantId}/status`,
+  // todo - change product routes
+  getProductDetails: (chakkiId: UUID, productId: UUID) =>
+    `/admin/products/${productId}`,
+  addProduct: (chakkiId: UUID) => '/admin/products',
 };
