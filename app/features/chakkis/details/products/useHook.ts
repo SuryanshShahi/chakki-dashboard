@@ -1,14 +1,14 @@
 import {
-  deleteChakki,
-  getChakkiList,
-  updateChakkiStatus,
+  deleteProduct,
+  getProductList,
+  updateProductStatus,
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
 import { Status } from '@/app/utils/enum';
 import useDebounce from '@/app/utils/hooks/useDebounce';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { UUID } from 'crypto';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IProductList } from './types';
 
@@ -26,6 +26,9 @@ const initialFilters = {
 
 export const useHook = () => {
   const router = useRouter();
+
+  const params = useParams();
+  const chakkiId = params.id as UUID;
 
   const initialPagination = { page: 1, limit: 10 };
 
@@ -46,20 +49,19 @@ export const useHook = () => {
   const hasFilters = Object.values(modifiedFilters).filter(Boolean).length;
 
   const {
-    data: chakkiList = { data: [] },
+    data: productList = [],
     isLoading,
-    refetch: refetchChakkis,
-  } = useQuery<{
-    data: IProductList[];
-  }>({
+    refetch: refetchProducts,
+  } = useQuery<IProductList[]>({
     queryKey: [
-      'chakkiList',
+      'productList',
       modifiedFilters,
       paginationData?.limit,
       paginationData.page,
     ],
     queryFn: () =>
-      getChakkiList(
+      getProductList(
+        chakkiId,
         typeof window !== 'undefined' && hasFilters
           ? window.btoa(JSON.stringify(modifiedFilters))
           : undefined,
@@ -68,12 +70,12 @@ export const useHook = () => {
       ),
   });
 
-  const { mutate: deleteChakkiMutation } = useMutation({
-    mutationFn: (chakkiId: UUID) => deleteChakki(chakkiId),
+  const { mutate: deleteProductMutation } = useMutation({
+    mutationFn: (productId: UUID) => deleteProduct(chakkiId, productId),
     onSuccess: () => {
-      refetchChakkis();
+      refetchProducts();
       showToast({
-        title: 'Chakki Deleted Successfully',
+        title: 'Product Deleted Successfully',
         type: 'success',
       });
     },
@@ -86,15 +88,15 @@ export const useHook = () => {
     onSettled: () => {},
   });
 
-  const { mutate: updateChakkiStatusMutation } = useMutation({
-    mutationFn: (data: { chakkiId: UUID; status: string }) =>
-      updateChakkiStatus(data.chakkiId, {
+  const { mutate: updateProductStatusMutation } = useMutation({
+    mutationFn: (data: { productId: UUID; status: string }) =>
+      updateProductStatus(chakkiId, data.productId, {
         status: data.status,
       }),
     onSuccess: () => {
-      refetchChakkis();
+      refetchProducts();
       showToast({
-        title: 'Updated Chakki Status',
+        title: 'Updated Product Status',
         type: 'success',
       });
     },
@@ -109,14 +111,15 @@ export const useHook = () => {
 
   return {
     router,
-    chakkiList,
+    productList,
     isLoading,
     filters,
     hasFilters,
     initialFilters,
     statusFilters,
+    chakkiId,
     setFilters,
-    deleteChakkiMutation,
-    updateChakkiStatusMutation,
+    deleteProductMutation,
+    updateProductStatusMutation,
   };
 };

@@ -153,6 +153,18 @@ export const getChakkiDetails = async (chakkiId: UUID) => {
 // ---------------------------------------- Products ----------------------------------------
 // --------------------------------------------------------------------------------------
 
+export const getProductList = async (
+  chakkiId: UUID,
+  filters?: string,
+  page?: number,
+  limit?: number
+) => {
+  const res = await axiosInstance().get(
+    API_CONSTANTS.searchProductList(chakkiId, filters, page, limit)
+  );
+  return res?.data?.data || {};
+};
+
 export const getProductDetails = async (chakkiId: UUID, productId: UUID) => {
   const res = await axiosInstance().get(
     API_CONSTANTS.getProductDetails(chakkiId, productId)
@@ -174,9 +186,8 @@ export const addProductImages = async (
   productId: UUID,
   formData: any
 ) => {
-  // todo - change this
   const res = await axiosInstance().post(
-    API_CONSTANTS.addChakkiImage(chakkiId),
+    API_CONSTANTS.addProductImage(chakkiId, productId),
     formData
   );
   return res?.data;
@@ -187,10 +198,28 @@ export const updateProduct = async (
   productId: UUID,
   body: IUpdateChakki
 ) => {
-  // todo - change this
   const res = await axiosInstance().post(
-    API_CONSTANTS.updateChakki(chakkiId),
+    API_CONSTANTS.updateProduct(chakkiId, productId),
     body
+  );
+  return res?.data;
+};
+
+export const updateProductStatus = async (
+  chakkiId: UUID,
+  productId: UUID,
+  body: IUpdateEntityStatus
+) => {
+  const res = await axiosInstance().patch(
+    API_CONSTANTS.updateProductStatus(chakkiId, productId),
+    body
+  );
+  return res?.data;
+};
+
+export const deleteProduct = async (chakkiId: UUID, productId: UUID) => {
+  const res = await axiosInstance().delete(
+    API_CONSTANTS.deleteProduct(chakkiId, productId)
   );
   return res?.data;
 };

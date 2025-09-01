@@ -421,6 +421,7 @@ export function AddChakki() {
             type='text'
           />
           <InputField
+            required
             label={localize('landmark')}
             placeholder={localize('enter_landmark')}
             onChange={handleChange('address.landmark')}

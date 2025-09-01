@@ -1,5 +1,6 @@
 import { IChakkiDetails } from '../../types';
+import Products from '../products';
 
 export const ChakkiProducts = ({ data }: { data?: IChakkiDetails }) => {
-  return <div className='space-y-8'></div>;
+  return <Products />;
 };

@@ -68,6 +68,7 @@ export const ErrorMessage = {
   NO_SPECIAL_CHARACTERS: 'Cannot have special characters',
   MAX_15_CHAR: 'Please enter at most 15 characters',
   MIN_2_CHAR: 'Please enter at least 2 characters',
+  MIN_1_VALUE: 'Minimum 1',
 };
 
 export const Regex = {

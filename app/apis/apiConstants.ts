@@ -40,4 +40,23 @@ export const API_CONSTANTS = {
   getProductDetails: (chakkiId: UUID, productId: UUID) =>
     `/admin/products/${productId}`,
   addProduct: (chakkiId: UUID) => '/admin/products',
+  addProductImage: (chakkiId: UUID, productId: UUID) =>
+    `/admin/chakki/${chakkiId}/product/${productId}/image`,
+  updateProduct: (chakkiId: UUID, productId: UUID) =>
+    `/admin/products/${productId}`,
+  updateProductStatus: (chakkiId: UUID, productId: UUID) =>
+    `/admin/products/${productId}/status`,
+  searchProductList: (
+    chakkiId: UUID,
+    filters?: string,
+    page?: number,
+    limit?: number
+  ) =>
+    createUrl('/admin/products', {
+      filters,
+      limit,
+      page,
+    }),
+  deleteProduct: (chakkiId: UUID, productId: UUID) =>
+    `/admin/products/${productId}`,
 };

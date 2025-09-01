@@ -48,7 +48,7 @@ export const addChakkiSchema = () =>
       addressLine1: yup.string().max(255).required(ErrorMessage.REQUIRED),
       addressLine2: yup.string().max(255),
       addressLine3: yup.string().max(255),
-      landmark: yup.string().max(255),
+      landmark: yup.string().max(255).required(ErrorMessage.REQUIRED),
       mapLink: yup
         .string()
         .required(ErrorMessage.REQUIRED)
@@ -95,7 +95,7 @@ export const addProductSchema = () =>
       .min(1, 'Description must be at least 1 characters long')
       .max(500, 'Description must be less than 500 characters long'),
     takeCustomerRequests: yup.boolean(),
-    pricePerUnit: yup.number().required(ErrorMessage.REQUIRED),
+    pricePerUnit: yup.number().moreThan(0, ErrorMessage.MIN_1_VALUE).required(ErrorMessage.REQUIRED),
     measurementUnit: yup
       .object({
         value: yup.string().required(ErrorMessage.REQUIRED),

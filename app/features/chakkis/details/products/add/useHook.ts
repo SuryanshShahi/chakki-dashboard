@@ -122,7 +122,7 @@ export function useHook(chakkiId: UUID, productId?: UUID) {
         addNewProductImages(chakkiId, res?.data?.id);
       }
 
-      router.replace(`..`);
+      router.replace(`..?tab=products`);
     },
     onError: (err: any) => {
       showToast({
