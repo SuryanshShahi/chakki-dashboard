@@ -4,9 +4,10 @@ import {
   updateMerchantStatus,
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
+import { getEncodedFilters } from '@/app/utils/constants';
 import { Status } from '@/app/utils/enum';
 import useDebounce from '@/app/utils/hooks/useDebounce';
-import { IMerchant, IUser } from '@/app/utils/types';
+import { IMerchant } from '@/app/utils/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { UUID } from 'crypto';
 import { useRouter } from 'next/navigation';
@@ -59,9 +60,7 @@ export const useHook = () => {
     queryKey: ['searchMerchantList', modifiedFilters, paginationData],
     queryFn: () =>
       searchMerchants(
-        typeof window !== 'undefined' && hasFilters
-          ? window.btoa(JSON.stringify(modifiedFilters))
-          : undefined,
+        getEncodedFilters(modifiedFilters),
         paginationData.page,
         paginationData.limit
       ),

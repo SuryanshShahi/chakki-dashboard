@@ -43,15 +43,25 @@ export function useHook(chakkiId: UUID, productId?: UUID) {
     });
 
   const initialValues: IInitialValue = {
-    name: productDetails?.name ?? '',
-    code: productDetails?.code ?? '',
-    description: productDetails?.description ?? '',
     measurementUnit: MEASUREMENT_UNITS.find(
       (u) => u.value === productDetails?.measurementUnit
     ),
-    pricePerUnit: productDetails?.pricePerUnit || 0,
-    takeCustomerRequests: productDetails?.takeCustomerRequests ?? false,
     images: [],
+    ...(productDetails
+      ? ObjectUtils.pick(productDetails, [
+          'name',
+          'code',
+          'description',
+          'pricePerUnit',
+          'takeCustomerRequests',
+        ])
+      : {
+          name: '',
+          code: '',
+          description: '',
+          pricePerUnit: 0,
+          takeCustomerRequests: false,
+        }),
   };
 
   const formikProps = useFormik({
@@ -88,8 +98,11 @@ export function useHook(chakkiId: UUID, productId?: UUID) {
   const { errors, values } = formikProps;
 
   const { mutate: addProductImagesMutation } = useMutation({
-    mutationFn: (data: { chakkiId: UUID; productId: UUID; formData: FormData }) =>
-      addProductImages(data.chakkiId, data.productId, data.formData),
+    mutationFn: (data: {
+      chakkiId: UUID;
+      productId: UUID;
+      formData: FormData;
+    }) => addProductImages(data.chakkiId, data.productId, data.formData),
     onError: (err: any) => {
       showToast({
         title: err?.response?.data?.message,

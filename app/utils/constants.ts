@@ -150,3 +150,10 @@ export const determineSearchType = (value: string) => {
     return 'name';
   }
 };
+
+export const getEncodedFilters = <T extends object>(filters: T) => {
+  if (typeof window === "undefined") {
+      return undefined;
+  }
+  return Object.values(filters).length ? window?.btoa(JSON.stringify(filters)) : undefined;
+};

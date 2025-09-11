@@ -155,20 +155,22 @@ export function AddProduct({ chakkiId }: { chakkiId: UUID }) {
                 />
               }
             />
-            <div className='flex gap-2 flex-wrap'>
-              {values.externalStoreLinks?.map((l, index) => (
-                <Chip
-                  key={index}
-                  title={l?.length > 50 ? l.slice(0, 50) + '...' : l}
-                  handleRemove={() => {
-                    const newExternalLink = values.externalStoreLinks?.filter(
-                      (_, idx) => idx !== index
-                    );
-                    setFieldValue('externalStoreLinks', newExternalLink);
-                  }}
-                />
-              ))}
-            </div>
+            {values.externalStoreLinks ? (
+              <div className='flex gap-2 flex-wrap'>
+                {values.externalStoreLinks?.map((l, index) => (
+                  <Chip
+                    key={index}
+                    title={l?.length > 50 ? l.slice(0, 50) + '...' : l}
+                    handleRemove={() => {
+                      const newExternalLink = values.externalStoreLinks?.filter(
+                        (_, idx) => idx !== index
+                      );
+                      setFieldValue('externalStoreLinks', newExternalLink);
+                    }}
+                  />
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <LabelWithError

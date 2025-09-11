@@ -4,6 +4,7 @@ import {
   updateProductStatus,
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
+import { getEncodedFilters } from '@/app/utils/constants';
 import { Status } from '@/app/utils/enum';
 import useDebounce from '@/app/utils/hooks/useDebounce';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -62,9 +63,7 @@ export const useHook = () => {
     queryFn: () =>
       getProductList(
         chakkiId,
-        typeof window !== 'undefined' && hasFilters
-          ? window.btoa(JSON.stringify(modifiedFilters))
-          : undefined,
+        getEncodedFilters(modifiedFilters),
         paginationData.page,
         paginationData.limit
       ),
