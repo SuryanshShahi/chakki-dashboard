@@ -9,8 +9,8 @@ import { Status } from '@/app/utils/enum';
 import useDebounce from '@/app/utils/hooks/useDebounce';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { UUID } from 'crypto';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { IProductList } from './types';
 
 const statusFilters = [
@@ -31,14 +31,9 @@ export const useHook = () => {
   const params = useParams();
   const chakkiId = params.id as UUID;
 
-  const initialPagination = { page: 1, limit: 10 };
+  const queryParams = useSearchParams();
 
   const [filters, setFilters] = useState(initialFilters);
-  const [paginationData, setPaginationData] = useState(initialPagination);
-
-  useEffect(() => {
-    setPaginationData(initialPagination);
-  }, [filters]);
 
   const debouncedSearch = useDebounce(filters.q, 300);
 
@@ -47,6 +42,9 @@ export const useHook = () => {
     status: filters.status.value !== 'all' ? [filters.status.value] : undefined,
   };
 
+  const limit = Number(queryParams.get('limit') || 10);
+  const page = Number(queryParams.get('page') || 1);
+
   const hasFilters = Object.values(modifiedFilters).filter(Boolean).length;
 
   const {
@@ -54,19 +52,9 @@ export const useHook = () => {
     isLoading,
     refetch: refetchProducts,
   } = useQuery<IProductList[]>({
-    queryKey: [
-      'productList',
-      modifiedFilters,
-      paginationData?.limit,
-      paginationData.page,
-    ],
+    queryKey: ['productList', modifiedFilters, limit, page],
     queryFn: () =>
-      getProductList(
-        chakkiId,
-        getEncodedFilters(modifiedFilters),
-        paginationData.page,
-        paginationData.limit
-      ),
+      getProductList(chakkiId, getEncodedFilters(modifiedFilters), page, limit),
   });
 
   const { mutate: deleteProductMutation } = useMutation({

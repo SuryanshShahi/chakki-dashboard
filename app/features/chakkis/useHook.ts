@@ -9,8 +9,8 @@ import { Status } from '@/app/utils/enum';
 import useDebounce from '@/app/utils/hooks/useDebounce';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { UUID } from 'crypto';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { IChakkiList } from './types';
 
 const statusFilters = [
@@ -27,15 +27,11 @@ const initialFilters = {
 
 export const useHook = () => {
   const router = useRouter();
-
-  const initialPagination = { page: 1, limit: 10 };
+  const params = useSearchParams();
+  const limit = Number(params.get('limit') || 10);
+  const page = Number(params.get('page') || 1);
 
   const [filters, setFilters] = useState(initialFilters);
-  const [paginationData, setPaginationData] = useState(initialPagination);
-
-  useEffect(() => {
-    setPaginationData(initialPagination);
-  }, [filters]);
 
   const debouncedSearch = useDebounce(filters.q, 300);
 
@@ -53,18 +49,9 @@ export const useHook = () => {
   } = useQuery<{
     data: IChakkiList[];
   }>({
-    queryKey: [
-      'chakkiList',
-      modifiedFilters,
-      paginationData?.limit,
-      paginationData.page,
-    ],
+    queryKey: ['chakkiList', modifiedFilters, limit, page],
     queryFn: () =>
-      getChakkiList(
-        getEncodedFilters(modifiedFilters),
-        paginationData.page,
-        paginationData.limit
-      ),
+      getChakkiList(getEncodedFilters(modifiedFilters), page, limit),
   });
 
   const { mutate: deleteChakkiMutation } = useMutation({

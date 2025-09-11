@@ -39,7 +39,7 @@ export const ProductDetails = ({ id }: { id: UUID }) => {
       <DetailPage
         className='space-y-5'
         data={{
-          title: `Everything about ${chakkiDetails?.name}`,
+          title: `Everything about ${chakkiDetails?.name || ''}`,
           subtitle: `Chakki overview, their products, overall order and performance statistics and more...`,
         }}
         buttons={[

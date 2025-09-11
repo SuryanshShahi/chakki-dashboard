@@ -10,8 +10,8 @@ import useDebounce from '@/app/utils/hooks/useDebounce';
 import { IMerchant } from '@/app/utils/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { UUID } from 'crypto';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 const statusFilters = [
   { label: 'All', value: 'all' },
@@ -28,20 +28,18 @@ const initialFilters = {
 export const useHook = () => {
   const router = useRouter();
 
-  const initialPagination = { page: 1, limit: 10 };
-
   const [filters, setFilters] = useState(initialFilters);
-  const [paginationData, setPaginationData] = useState(initialPagination);
+
+  const params = useSearchParams();
+
+  const limit = Number(params.get('limit') || 10);
+  const page = Number(params.get('page') || 1);
 
   const [isAddMerchant, setIsAddMerchant] = useState<{
     name: string;
     phone: string;
     email: string;
   } | null>(null);
-
-  useEffect(() => {
-    setPaginationData(initialPagination);
-  }, [filters]);
 
   const debouncedSearch = useDebounce(filters.q, 300);
 
@@ -57,13 +55,9 @@ export const useHook = () => {
     isFetching: isFetchingMerchants,
     refetch: refetchMerchants,
   } = useQuery<IMerchant[]>({
-    queryKey: ['searchMerchantList', modifiedFilters, paginationData],
+    queryKey: ['searchMerchantList', modifiedFilters, limit, page],
     queryFn: () =>
-      searchMerchants(
-        getEncodedFilters(modifiedFilters),
-        paginationData.page,
-        paginationData.limit
-      ),
+      searchMerchants(getEncodedFilters(modifiedFilters), page, limit),
   });
 
   const { mutate: removeAsMerchantMutation } = useMutation({
