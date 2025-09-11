@@ -44,10 +44,10 @@ const axiosInstance = (serviceName?: string) => {
        * 401: Unauthorized
        */
       if (
-        ((error.response.data.httpStatus === 401 &&
-          error.response.data.code === 901) ||
-          (error.response.status === 401 &&
-            error.response.data.response.code === 901)) &&
+        ((error?.response?.data?.httpStatus === 401 &&
+          error?.response?.data?.code === 901) ||
+          (error?.response?.status === 401 &&
+            error?.response?.data?.response?.code === 901)) &&
         !originalRequest._retry
       ) {
         originalRequest._retry = true;
@@ -92,9 +92,9 @@ const axiosInstance = (serviceName?: string) => {
         } catch (err) {
           if (
             axios.isAxiosError(err) &&
-            err.response?.status === 401 &&
-            (err.response.data.response.code === 901 ||
-              error.response.data.response.code === 905)
+            err?.response?.status === 401 &&
+            (err?.response?.data?.response?.code === 901 ||
+              error?.response?.data?.response?.code === 905)
           ) {
             removeCookie("token");
             window.location.href = "/auth/login";
