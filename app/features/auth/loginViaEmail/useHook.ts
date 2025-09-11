@@ -6,7 +6,6 @@ import { loginWithEmailSchema } from '@/app/utils/schemas';
 import { useMutation } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { IVerifyOtp } from '../types';
 
 const initialValues = {
@@ -63,29 +62,20 @@ const useHook = () => {
       router.push('/home');
     },
     onError: (err: any) => {
-      setFieldError('otp', err?.response?.data?.response?.message as string);
+      setFieldError('otp', err?.response?.data?.message as string);
     },
     onSettled: () => {
       formikProps.setSubmitting(false);
     },
   });
   const handleLogin = () => {
-    if (values?.otp?.length === 6 && values?.otpId) {
-      const payload = {
-        otpId: values?.otpId,
-        otp: values?.otp,
-        mode: 'email',
-      };
-      loginRequest(payload);
-    } else {
-      setFieldError('otp', '');
-    }
+    const payload = {
+      otpId: values.otpId || '',
+      otp: values.otp,
+      mode: 'email',
+    };
+    loginRequest(payload);
   };
-
-  useEffect(() => {
-    handleLogin();
-  }, [values?.otp, values?.otpId]);
-
   const isBtnDisabled = Boolean(Object.values(errors).length);
 
   return {
@@ -93,6 +83,7 @@ const useHook = () => {
     isPending,
     isBtnDisabled,
     registeredDeviceId,
+    handleLogin,
     ...formikProps,
   };
 };

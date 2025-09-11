@@ -10,8 +10,8 @@ function RootLayout({ children }: { children: ReactNode }) {
   return (
     <Suspense fallback={<Loader />}>
       <div className='grid lg:grid-cols-2 h-screen place-items-center'>
-        <div className='flex flex-col gap-y-8 sm:p-8 p-5 h-full'>
-          <div className='flex flex-col items-center mt-auto'>
+        <div className='flex flex-col gap-y-8 sm:p-8 p-5 h-full max-w-[70%] w-full'>
+          <div className='flex flex-col items-center mt-auto w-full'>
             <Img
               src='/images/logo.png'
               height={40}
@@ -35,7 +35,7 @@ function RootLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div
-          className='lg:block hidden space-y-8 relative px-16 pb-10 bg-cover bg-center h-screen w-full bg-blue-50 bg-no-repeat'
+          className='lg:flex hidden flex-col justify-end space-y-8 relative px-16 pb-10 bg-cover bg-center h-screen w-full bg-blue-50 bg-no-repeat'
           style={{
             backgroundImage: `url(${'/images/wheat-field.avif'})`,
           }}

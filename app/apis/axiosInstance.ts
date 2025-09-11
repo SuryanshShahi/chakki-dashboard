@@ -39,15 +39,12 @@ const axiosInstance = (serviceName?: string) => {
 
       /**
        * Error codes:
-       * 901: Invalid refresh token
        * 905: Refresh token expired
        * 401: Unauthorized
        */
       if (
-        ((error.response.data.httpStatus === 401 &&
-          error.response.data.code === 901) ||
-          (error.response.status === 401 &&
-            error.response.data.response.code === 901)) &&
+        (error.response.data.httpStatus === 401 ||
+          error.response.status === 401) &&
         !originalRequest._retry
       ) {
         originalRequest._retry = true;
@@ -74,35 +71,30 @@ const axiosInstance = (serviceName?: string) => {
 
             // Update the authorization header with the new access token.
             instance.defaults.headers.common[
-              "Authorization"
+              'Authorization'
             ] = `Bearer ${newAccessToken}`;
             originalRequest.headers[
-              "Authorization"
+              'Authorization'
             ] = `Bearer ${newAccessToken}`;
 
             return instance(originalRequest);
           } else {
-            removeCookie("token");
+            removeCookie('token');
             return Promise.reject(
               error instanceof Error
                 ? error
-                : new Error("An unexpected error occurred during token refresh")
+                : new Error('An unexpected error occurred during token refresh')
             );
           }
         } catch (err) {
-          if (
-            axios.isAxiosError(err) &&
-            err.response?.status === 401 &&
-            (err.response.data.response.code === 901 ||
-              error.response.data.response.code === 905)
-          ) {
-            removeCookie("token");
-            window.location.href = "/auth/login";
+          if (axios.isAxiosError(err) && err.response?.status === 401) {
+            removeCookie('token');
+            window.location.href = '/auth/login';
           }
           return Promise.reject(
             error instanceof Error
               ? error
-              : new Error("An unexpected error occurred during token refresh")
+              : new Error('An unexpected error occurred during token refresh')
           );
         }
       }
@@ -110,7 +102,7 @@ const axiosInstance = (serviceName?: string) => {
       return Promise.reject(
         error instanceof Error
           ? error
-          : new Error("An unexpected error occurred during token refresh")
+          : new Error('An unexpected error occurred during token refresh')
       );
     }
   );

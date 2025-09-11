@@ -73,9 +73,9 @@ const OtpInputField = ({
             )}
           />
         </div>
-        <Text as='h6' className='text-error-primary' size='sm'>
-          {errorMessage}
-        </Text>
+        {errorMessage && (
+          <p className='text-xs text-red-600 text-center'>{errorMessage}</p>
+        )}
       </div>
       {resend && (
         <Text variant='tertiary' size='sm' className='mt-6 text-center'>

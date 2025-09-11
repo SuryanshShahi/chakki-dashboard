@@ -12,19 +12,20 @@ const LoginViaEmail = () => {
   const {
     isPending,
     registeredDeviceId,
-    sendOtp,
-    handleSubmit,
     values,
     errors,
     touched,
     isBtnDisabled,
+    sendOtp,
+    handleSubmit,
     handleChange,
     handleBlur,
     setFieldValue,
+    handleLogin,
   } = useHook();
 
   return (
-    <div className='space-y-4 max-w-[55%] mx-auto'>
+    <div className='space-y-4'>
       <div>
         <Heading as='h5' className={clsx('w-max mx-auto text-2xl')}>
           Sign In
@@ -42,8 +43,13 @@ const LoginViaEmail = () => {
         <>
           <OtpInputField
             otp={values.otp}
-            setOtp={(otp) => setFieldValue('otp', otp)}
-            errorMessage=''
+            setOtp={(otp) => {
+              setFieldValue('otp', otp);
+              if (otp?.length === 6 && values.otpId) {
+                handleLogin();
+              }
+            }}
+            errorMessage={errors.otp}
             resend={() => {
               sendOtp({
                 mode: 'email',
