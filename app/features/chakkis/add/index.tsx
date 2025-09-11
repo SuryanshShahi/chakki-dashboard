@@ -2,7 +2,6 @@
 import PageWrapper from '@/app/components/pageWrapper/PageWrapper';
 import Chip from '@/app/shared/Chip';
 import Divider from '@/app/shared/Divider';
-import Loader from '@/app/shared/Loader';
 import Text from '@/app/shared/Text';
 import BtnGroup from '@/app/shared/buttons/BtnGroup';
 import Button from '@/app/shared/buttons/Button';
@@ -40,9 +39,10 @@ export function AddChakki() {
     merchantOptions,
     isFetchMerchants,
     isAddMerchant,
+    isBtnDisabled,
     setIsAddMerchant,
-    loadMerchantOptions,
     onCreateNewMerchant,
+    setSearchKey,
     refetchMerchant,
   } = useHook();
   const {
@@ -57,8 +57,6 @@ export function AddChakki() {
 
   const generatedLatLng = extractLatLng(values.address?.mapLink || '');
 
-  if (isFetchMerchants) return <Loader />;
-
   return (
     <PageWrapper
       breadCrumbs={[{ label: 'Chakkis', path: '/chakkis' }, { label: 'Add' }]}
@@ -68,6 +66,7 @@ export function AddChakki() {
           isOpen={isAddMerchant !== null}
           close={() => setIsAddMerchant(null)}
           size='md'
+          defaultValues={isAddMerchant}
           onAddMerchant={(merchant: IAddMerchantPayload) => {
             setFieldValue('merchant', {
               label: `${merchant.name} (${merchant.phone})`,
@@ -115,7 +114,7 @@ export function AddChakki() {
             isLoading={isFetchMerchants}
             useInternalState={false}
             isMulti={false}
-            onLoadOptions={loadMerchantOptions}
+            onLoadOptions={(a) => setSearchKey(a)}
             onChangeDropdown={(selected: Option) => {
               setFieldValue('merchant', selected || null);
             }}
@@ -463,6 +462,7 @@ export function AddChakki() {
           btnName='Submit'
           onClick={() => handleSubmit()}
           className='ml-auto'
+          disabled={isBtnDisabled}
         />
       </div>
     </PageWrapper>

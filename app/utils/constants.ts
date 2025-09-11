@@ -83,20 +83,6 @@ export const getAllowedTypes = (fileTypes: string[]): FileType => {
   return { types, displayNames };
 };
 
-export function debounce<T extends (...args: any[]) => void>(
-  func: T,
-  wait: number
-) {
-  let timeout: ReturnType<typeof setTimeout>;
-
-  return (...args: Parameters<T>) => {
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      func(...args);
-    }, wait);
-  };
-}
-
 export const BOOLEAN_OPTIONS = [
   {
     label: 'Yes',
@@ -141,3 +127,26 @@ export const MEASUREMENT_UNITS = [
     value: 'ton',
   },
 ];
+
+export const ObjectUtils = {
+  pick: <T, U extends keyof T>(
+    item: T,
+    keys: U[],
+    copy: Pick<T, U> = {} as any
+  ): Pick<T, U> => {
+    keys.forEach((key) => (copy[key] = item[key]));
+    return copy!;
+  },
+};
+
+export const determineSearchType = (value: string) => {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const phonePattern = /^\+?[0-9\s-]{7,15}$/;
+  if (emailPattern.test(value)) {
+    return 'email';
+  } else if (phonePattern.test(value)) {
+    return 'phone';
+  } else {
+    return 'name';
+  }
+};

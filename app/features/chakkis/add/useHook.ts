@@ -8,7 +8,12 @@ import {
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
 import { IDropdown, Option } from '@/app/shared/dropdown';
-import { debounce, extractLatLng } from '@/app/utils/constants';
+import {
+  ObjectUtils,
+  determineSearchType,
+  extractLatLng,
+} from '@/app/utils/constants';
+import useDebounce from '@/app/utils/hooks/useDebounce';
 import { addChakkiSchema } from '@/app/utils/schemas';
 import { IUser } from '@/app/utils/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -16,7 +21,7 @@ import { File } from 'buffer';
 import { UUID } from 'crypto';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   IAddChakkiAddress,
   IAddChakkiPayload,
@@ -46,21 +51,21 @@ export function useHook(chakkiId?: UUID) {
   const router = useRouter();
   const [merchantOptions, setMerchantOptions] = useState<Option[]>([]);
   const [isAddMerchant, setIsAddMerchant] = useState<{
-    name: string;
-    phone: string;
-    email: string;
+    name?: string;
+    phone?: string;
+    email?: string;
   } | null>(null);
 
-  const { data: chakki, isLoading: isLoadingChakkiDetails } = useQuery<{
-    data: IChakkiDetails;
-  }>({
-    queryKey: ['chakkiDetails', chakkiId],
-    queryFn: () => getChakkiDetails(chakkiId as UUID),
-    enabled: !!chakkiId,
-  });
-  const chakkiDetails = chakki?.data;
+  const { data: chakkiDetails, isLoading: isLoadingChakkiDetails } =
+    useQuery<IChakkiDetails>({
+      queryKey: ['chakkiDetails', chakkiId],
+      queryFn: () => getChakkiDetails(chakkiId as UUID),
+      enabled: !!chakkiId,
+    });
 
   const [searchKey, setSearchKey] = useState<string | undefined>(undefined);
+  const debouncedSearchKey = useDebounce(searchKey, 400);
+
   const {
     data: merchantList,
     isFetching: isFetchMerchants,
@@ -68,19 +73,19 @@ export function useHook(chakkiId?: UUID) {
   } = useQuery<{
     data: IUser[];
   }>({
-    queryKey: ['activeMerchantList', searchKey],
+    queryKey: ['activeMerchantList', debouncedSearchKey],
     queryFn: () =>
       getActiveMerchantList(
         1,
         10,
-        searchKey ? btoa(JSON.stringify({ q: searchKey as string })) : undefined
+        debouncedSearchKey
+          ? btoa(JSON.stringify({ q: debouncedSearchKey as string }))
+          : undefined
       ),
     enabled: !chakkiId,
   });
 
   const initialValues: IInitialValue = {
-    name: chakkiDetails?.name ?? '',
-    code: chakkiDetails?.code ?? '',
     link: '',
     merchantId: chakkiDetails?.merchant?.id ?? undefined,
     merchant: chakkiDetails?.merchant
@@ -89,25 +94,23 @@ export function useHook(chakkiId?: UUID) {
           value: chakkiDetails?.merchant?.id as string,
         }
       : null,
-    isCustomerRequestAvailable:
-      chakkiDetails?.isCustomerRequestAvailable ?? false,
-    operationalHours: chakkiDetails?.operationalHours || {},
     minOrderAmount: chakkiDetails?.minOrderValue ?? 0,
-    deliveryRangeInKms: chakkiDetails?.deliveryRangeInKms ?? 0,
-    contactDetails: chakkiDetails?.contactDetails,
-    externalStoreLinks: chakkiDetails?.externalStoreLinks || [],
     images: [],
     showExtraContactInfo: false,
     selectedDays: [0, 1, 2, 3, 4, 5, 6],
-    address: {
-      addressLine1: '',
-      addressLine2: '',
-      addressLine3: '',
-      landmark: '',
-      mapLink: '',
-    },
     startTime: '09:00',
     endTime: '18:00',
+    ...(chakkiDetails
+      ? ObjectUtils.pick(chakkiDetails, [
+          'name',
+          'code',
+          'isCustomerRequestAvailable',
+          'operationalHours',
+          'deliveryRangeInKms',
+          'contactDetails',
+          'externalStoreLinks',
+        ])
+      : { name: '', code: '' }),
   };
 
   const formikProps = useFormik({
@@ -115,7 +118,6 @@ export function useHook(chakkiId?: UUID) {
     validateOnMount: true,
     enableReinitialize: true,
     validateOnChange: true,
-    validateOnBlur: true,
     onSubmit(values) {
       const operationalHours: IOperationalHours = {};
       values.selectedDays.forEach((d) => {
@@ -125,17 +127,19 @@ export function useHook(chakkiId?: UUID) {
         };
       });
       const payload: IAddChakkiPayload = {
-        name: values.name,
-        code: values.code,
-        contactDetails: values.contactDetails,
-        isCustomerRequestAvailable: values.isCustomerRequestAvailable,
-        minOrderAmount: values.minOrderAmount,
-        operationalHours: values.operationalHours,
-        isAcceptingOrders: values.isAcceptingOrders,
-        isAcceptingPickups: values.isAcceptingOrders,
-        deliveryRangeInKms: values.deliveryRangeInKms,
-        externalStoreLinks: values.externalStoreLinks,
         merchantId: (values.merchant?.value as UUID) || values?.merchantId,
+        ...ObjectUtils.pick(values, [
+          'name',
+          'code',
+          'contactDetails',
+          'isCustomerRequestAvailable',
+          'minOrderAmount',
+          'operationalHours',
+          'isAcceptingOrders',
+          'isAcceptingPickups',
+          'externalStoreLinks',
+          'deliveryRangeInKms',
+        ]),
       };
       if (chakkiId) {
         updateChakkiMutation({
@@ -151,30 +155,16 @@ export function useHook(chakkiId?: UUID) {
 
   const { errors, values } = formikProps;
 
-  const determineSearchType = (value: string) => {
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const phonePattern = /^\+?[0-9\s-]{7,15}$/;
-    if (emailPattern.test(value)) {
-      return 'email';
-    } else if (phonePattern.test(value)) {
-      return 'phone';
-    } else {
-      return 'name';
-    }
-  };
-
   const onCreateNewMerchant = (key: string) => {
     const searchType = determineSearchType(key);
     const defaultData = {
-      name: searchType === 'name' ? key : '',
-      email: searchType === 'email' ? key : '',
-      phone: searchType === 'phone' ? key : '',
+      [searchType]: key,
     };
     setIsAddMerchant(defaultData);
   };
 
   const { mutate: addChakkiImagesMutation } = useMutation({
-    mutationFn: (data: { chakkiId: UUID; formData: any }) =>
+    mutationFn: (data: { chakkiId: UUID; formData: FormData }) =>
       addChakkiImages(data.chakkiId, data.formData),
     onError: (err: any) => {
       showToast({
@@ -221,10 +211,12 @@ export function useHook(chakkiId?: UUID) {
 
       if (values.address) {
         const payload: IAddChakkiAddress = {
-          addressLine1: values.address.addressLine1,
-          addressLine2: values.address.addressLine2,
-          addressLine3: values.address.addressLine3,
-          landmark: values.address.landmark,
+          ...ObjectUtils.pick(values.address, [
+            'addressLine1',
+            'addressLine2',
+            'addressLine3',
+            'landmark',
+          ]),
           latitude: extractLatLng(values.address.mapLink!)?.latitude || 0,
           longitude: extractLatLng(values.address.mapLink!)?.longitude || 0,
         };
@@ -267,22 +259,12 @@ export function useHook(chakkiId?: UUID) {
     },
   });
 
-  const loadMerchantOptions = useMemo(
-    () =>
-      debounce((key: string) => {
-        setSearchKey(key);
-      }, 400),
-    []
-  );
-
   useEffect(() => {
     const newOptions =
       merchantList?.data.map((m) => ({
         label: `${m.name} (${m.phone})`,
         value: m.id,
       })) || [];
-
-    console.log({ newOptions });
 
     setMerchantOptions([
       ...newOptions,
@@ -293,7 +275,7 @@ export function useHook(chakkiId?: UUID) {
     ]);
   }, [merchantList, searchKey]);
 
-  const isBtnDisabled = Object.values(errors).length;
+  const isBtnDisabled = Boolean(Object.values(errors).length);
 
   return {
     isLoadingChakkiDetails,
@@ -303,10 +285,10 @@ export function useHook(chakkiId?: UUID) {
     formikProps,
     merchantOptions,
     isAddMerchant,
-    loadMerchantOptions,
     setIsAddMerchant,
     onCreateNewMerchant,
     setMerchantOptions,
     refetchMerchant,
+    setSearchKey,
   };
 }

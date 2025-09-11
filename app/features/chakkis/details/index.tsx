@@ -13,7 +13,6 @@ import { useHook } from './useHook';
 
 export const ChakkiDetails = ({ id }: { id: UUID }) => {
   const { chakkiDetails, isLoadingChakkis } = useHook({ chakkiId: id });
-  console.log({ chakkiDetails });
 
   const router = useRouter();
 

@@ -6,7 +6,7 @@ import {
 } from '@/app/apis/apis';
 import { showToast } from '@/app/shared/ToastMessage';
 import { IDropdown } from '@/app/shared/dropdown';
-import { MEASUREMENT_UNITS } from '@/app/utils/constants';
+import { MEASUREMENT_UNITS, ObjectUtils } from '@/app/utils/constants';
 import { addProductSchema } from '@/app/utils/schemas';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { UUID } from 'crypto';
@@ -59,17 +59,18 @@ export function useHook(chakkiId: UUID, productId?: UUID) {
     validateOnMount: true,
     enableReinitialize: true,
     validateOnChange: true,
-    validateOnBlur: true,
     onSubmit(values) {
       const payload: IAddProductPayload = {
-        name: values?.name,
-        code: values?.code,
-        description: values?.description,
         measurementUnit: values?.measurementUnit?.value || '',
-        pricePerUnit: values?.pricePerUnit,
-        takeCustomerRequests: values?.takeCustomerRequests,
         status: 'draft',
         isAvailable: true,
+        ...ObjectUtils.pick(values, [
+          'name',
+          'code',
+          'description',
+          'pricePerUnit',
+          'takeCustomerRequests',
+        ]),
       };
       if (productId) {
         updateProductMutation({
@@ -87,7 +88,7 @@ export function useHook(chakkiId: UUID, productId?: UUID) {
   const { errors, values } = formikProps;
 
   const { mutate: addProductImagesMutation } = useMutation({
-    mutationFn: (data: { chakkiId: UUID; productId: UUID; formData: any }) =>
+    mutationFn: (data: { chakkiId: UUID; productId: UUID; formData: FormData }) =>
       addProductImages(data.chakkiId, data.productId, data.formData),
     onError: (err: any) => {
       showToast({
@@ -158,7 +159,7 @@ export function useHook(chakkiId: UUID, productId?: UUID) {
     },
   });
 
-  const isBtnDisabled = Object.values(errors).length;
+  const isBtnDisabled = Boolean(Object.values(errors).length);
 
   return {
     isLoadingProductDetails,

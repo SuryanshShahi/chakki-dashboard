@@ -9,23 +9,18 @@ const Home = () => {
   const { data, isLoading } = useHook();
   if (isLoading) return <Loader />;
   return (
-    <PageWrapper hideFooter wrapperClass='!px-0'>
-      <div className='grid grid-cols-4 gap-x-4'>
-        <StatsCard heading='Active Chakkis' subheading={data?.activeChakkis} />
-        <StatsCard
-          heading='Active Merchants'
-          subheading={data?.activeMerchants}
-        />
-        <StatsCard
-          heading='Active Products'
-          subheading={data?.activeProducts}
-        />
-        <StatsCard
-          heading='Average Ratings'
-          subheading={data?.averageRatings || '-'}
-        />
-      </div>
-    </PageWrapper>
+    <div className='grid grid-cols-4 gap-x-4'>
+      <StatsCard heading='Active Chakkis' subheading={data?.activeChakkis} />
+      <StatsCard
+        heading='Active Merchants'
+        subheading={data?.activeMerchants}
+      />
+      <StatsCard heading='Active Products' subheading={data?.activeProducts} />
+      <StatsCard
+        heading='Average Ratings'
+        subheading={data?.averageRatings || '-'}
+      />
+    </div>
   );
 };
 
@@ -44,7 +39,6 @@ const StatsCard = ({
         <p>{heading}</p>
         <p>{subheading}</p>
       </div>
-      <div></div>
     </CardWrapper>
   );
 };

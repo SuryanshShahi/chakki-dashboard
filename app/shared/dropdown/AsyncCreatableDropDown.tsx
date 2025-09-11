@@ -182,8 +182,7 @@ const AsyncCreatableDropDown: React.FC<DropdownFieldProps> = ({
             }),
             placeholder: (base) => ({
               ...base,
-              // by @suryansh
-              color: tw.textColor['reddjaksbhdkaj-500'],
+              color: tw.textColor['red-500'],
             }),
             option: (base) => ({
               ...base,

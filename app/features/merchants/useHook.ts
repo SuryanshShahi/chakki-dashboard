@@ -52,12 +52,10 @@ export const useHook = () => {
   const hasFilters = Object.values(modifiedFilters).filter(Boolean).length;
 
   const {
-    data: merchantList = { data: [] },
+    data: merchantList = [],
     isFetching: isFetchingMerchants,
     refetch: refetchMerchants,
-  } = useQuery<{
-    data: IMerchant[];
-  }>({
+  } = useQuery<IMerchant[]>({
     queryKey: ['searchMerchantList', modifiedFilters, paginationData],
     queryFn: () =>
       searchMerchants(
@@ -121,6 +119,6 @@ export const useHook = () => {
     setFilters,
     removeAsMerchantMutation,
     updateMerchantStatusMutation,
-    refetchMerchants
+    refetchMerchants,
   };
 };

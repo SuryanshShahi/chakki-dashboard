@@ -19,7 +19,7 @@ import { IoIosAddCircleOutline } from 'react-icons/io';
 import { useHook } from './useHook';
 
 export function AddProduct({ chakkiId }: { chakkiId: UUID }) {
-  const { formikProps, isLoadingProductDetails, chakkiDetails } =
+  const { formikProps, isLoadingProductDetails, chakkiDetails, isBtnDisabled } =
     useHook(chakkiId);
   const {
     values,
@@ -30,8 +30,6 @@ export function AddProduct({ chakkiId }: { chakkiId: UUID }) {
     setFieldValue,
     handleSubmit,
   } = formikProps;
-
-  console.log({ values, errors });
 
   if (isLoadingProductDetails) return <Loader />;
 
@@ -125,7 +123,6 @@ export function AddProduct({ chakkiId }: { chakkiId: UUID }) {
             options={MEASUREMENT_UNITS}
             placeholder={localize('enter_measurement_unit')}
             onChangeDropdown={(e) => {
-              console.log({ e });
               setFieldValue('measurementUnit', e);
             }}
             {...formikProps}
@@ -200,6 +197,7 @@ export function AddProduct({ chakkiId }: { chakkiId: UUID }) {
           btnName='Submit'
           onClick={() => handleSubmit()}
           className='ml-auto'
+          disabled={isBtnDisabled}
         />
       </div>
     </PageWrapper>

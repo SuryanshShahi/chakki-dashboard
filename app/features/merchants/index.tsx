@@ -53,14 +53,14 @@ const Merchants = () => {
     status: (IChip | undefined)[];
     actions: IAction[][];
   } = {
-    merchant: merchantList?.data?.map((e) => ({
+    merchant: merchantList?.map((e) => ({
       title: e.name,
       subtitle: e.phone,
       type: 'info',
       styleTitle: 'capitalize !font-normal',
       showInitials: true,
     })),
-    chakkis: merchantList?.data?.map(
+    chakkis: merchantList?.map(
       (item) =>
         item?.chakkis?.map((e) => ({
           title: e?.name,
@@ -68,14 +68,14 @@ const Merchants = () => {
           className: '!pr-2',
         })) ?? []
     ),
-    status: merchantList?.data?.map((e) => ({
+    status: merchantList?.map((e) => ({
       title: capitalize(e.status),
       className: 'rounded-full !px-[10px]',
       variant: getVariant(e?.status),
       type: 'tag',
       size: 'sm',
     })),
-    actions: merchantList?.data?.map((item) => [
+    actions: merchantList?.map((item) => [
       {
         btn: 'menu',
         menuItems: [
@@ -187,11 +187,8 @@ const Merchants = () => {
           ids={
             isFetchingMerchants
               ? null
-              : merchantList?.data?.map((item) => item?.id || '')
+              : merchantList?.map((item) => item?.id || '')
           }
-          onRowClick={(id) => {
-            //
-          }}
           emptyState={{
             title: 'No data found',
             subtitle: filters.q

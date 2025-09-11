@@ -16,23 +16,24 @@ export const AddMerchantModal = ({
   isOpen,
   size = 'md',
   onAddMerchant,
+  defaultValues,
 }: {
   isOpen: boolean;
   close: () => void;
   size?: 'sm' | 'md' | 'lg';
   onAddMerchant?: (id: IAddMerchantPayload) => void;
+  defaultValues?: Partial<IAddMerchantPayload> | null;
 }) => {
   const formikProps = useFormik({
     initialValues: {
-      name: '',
-      phone: '',
+      name: defaultValues?.name ?? '',
+      email: defaultValues?.email ?? '',
+      phone: defaultValues?.phone ?? '',
       countryCode: '+91',
-      email: '',
     },
     validateOnMount: true,
     enableReinitialize: true,
     validateOnChange: true,
-    validateOnBlur: true,
     validationSchema: addMerchantSchema,
     onSubmit(values) {
       const payload: IAddMerchantPayload = {
@@ -64,7 +65,7 @@ export const AddMerchantModal = ({
         type: 'success',
       });
       onAddMerchant?.({
-        id: res?.data?.id,
+        id: res?.id,
         name: values.name,
         email: values.email || undefined,
         phone: `${values.countryCode}${values.phone}`,

@@ -55,14 +55,6 @@ export const registerDevice = async (payload: { identifier: string }) => {
   const res = await axiosInstance().post(API_CONSTANTS.registerDevice, payload);
   return res?.data?.data;
 };
-export const uploadToS3 = async (url: string, data: any, mimeType: string) => {
-  const res = await axios.put(url, data, {
-    headers: {
-      'Content-Type': mimeType,
-    },
-  });
-  return res?.data?.data;
-};
 // --------------------------------------------------------------------------------------
 // ---------------------------------------- Auth ----------------------------------------
 // --------------------------------------------------------------------------------------
@@ -134,7 +126,7 @@ export const deleteChakki = async (chakkiId: UUID) => {
   return res?.data;
 };
 
-export const addChakkiImages = async (chakkiId: UUID, formData: any) => {
+export const addChakkiImages = async (chakkiId: UUID, formData: FormData) => {
   const res = await axiosInstance().post(
     API_CONSTANTS.addChakkiImage(chakkiId),
     formData
@@ -184,7 +176,7 @@ export const addProduct = async (chakkiId: UUID, body: IAddProductPayload) => {
 export const addProductImages = async (
   chakkiId: UUID,
   productId: UUID,
-  formData: any
+  formData: FormData
 ) => {
   const res = await axiosInstance().post(
     API_CONSTANTS.addProductImage(chakkiId, productId),
@@ -230,7 +222,7 @@ export const deleteProduct = async (chakkiId: UUID, productId: UUID) => {
 
 export const addMerchant = async (body: IAddMerchantPayload) => {
   const res = await axiosInstance().post(API_CONSTANTS.addMerchant, body);
-  return res?.data;
+  return res?.data?.data;
 };
 
 export const getMerchantList = async (
@@ -263,7 +255,7 @@ export const searchMerchants = async (
   const res = await axiosInstance().get(
     API_CONSTANTS.searchMerchants(filters, page, limit)
   );
-  return res?.data;
+  return res?.data?.data;
 };
 
 export const removeUserAsMerchant = async (merchantId: UUID) => {
