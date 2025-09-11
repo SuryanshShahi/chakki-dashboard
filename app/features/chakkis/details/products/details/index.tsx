@@ -7,7 +7,6 @@ import DetailPage from '@/app/shared/templates/DetailPages';
 import { UUID } from 'crypto';
 import { useRouter } from 'next/navigation';
 import { IoIosAddCircleOutline } from 'react-icons/io';
-import { ChakkiOrders } from './tabs/orders';
 import { ChakkiOverview } from './tabs/overview';
 import { ChakkiProducts } from './tabs/products';
 import { useHook } from './useHook';
@@ -26,10 +25,6 @@ export const ProductDetails = ({ id }: { id: UUID }) => {
     {
       name: 'Products',
       component: <ChakkiProducts data={chakkiDetails} />,
-    },
-    {
-      name: 'Orders',
-      component: <ChakkiOrders data={chakkiDetails} />,
     },
   ];
 

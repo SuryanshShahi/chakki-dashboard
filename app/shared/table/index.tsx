@@ -107,8 +107,8 @@ const Table = ({
         )}
       >
         {Array.isArray(data)
-          ? data?.map((e: any) => (
-              <Fragment key={e?.id}>
+          ? data?.map((e: any, idx: number) => (
+              <Fragment key={e?.id + idx}>
                 <Button
                   className='!p-2 !border-none'
                   variant='secondary'
