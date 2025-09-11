@@ -17,10 +17,10 @@ const Popover = ({
         className
       )}
     >
-      {menuItems?.map((item) => (
+      {menuItems?.map((item, idx) => (
         <div
           className='flex items-center gap-x-2 p-2 rounded-lg hover:bg-btn-secondary-hover cursor-pointer'
-          key={item?.id}
+          key={item?.id || "" + idx}
           onClick={(event) => {
             event?.stopPropagation();
             item?.onClick?.(item?.id as string);
