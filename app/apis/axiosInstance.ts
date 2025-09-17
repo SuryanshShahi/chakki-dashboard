@@ -1,10 +1,6 @@
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
-import axios from "axios";
-import { getCookie, removeCookie, setCookie } from "../utils/cookies";
-import { localStorageKeys } from "../utils/enum";
-import { getLocalItem, setLocalItem } from "../utils/localstorage";
-import { getRefreshAccessToken } from "./apis";
-import { decodeToken } from "../utils/constants";
+import axios from 'axios';
+import { getCookie, removeCookie, setCookie } from '../utils/cookies';
+import { getRefreshAccessToken } from './apis';
 
 const getBaseUrl = (name?: string) => {
   switch (name) {
@@ -36,12 +32,6 @@ const axiosInstance = (serviceName?: string) => {
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
-
-      /**
-       * Error codes:
-       * 905: Refresh token expired
-       * 401: Unauthorized
-       */
       if (
         (error.response.data.httpStatus === 401 ||
           error.response.status === 401) &&
@@ -50,24 +40,11 @@ const axiosInstance = (serviceName?: string) => {
         originalRequest._retry = true;
 
         try {
-          // Get a new access token using the refresh token.
-          const decodedToken = decodeToken(getCookie("token")?.accessToken);
-          let deviceId: string | null = getLocalItem(
-            localStorageKeys.DEVICE_ID
-          );
-          if (deviceId === null) {
-            deviceId = (await (await FingerprintJS.load()).get()).visitorId;
-            setLocalItem(localStorageKeys.DEVICE_ID, deviceId);
-          }
-          const res = await getRefreshAccessToken(
-            deviceId,
-            decodedToken?.identity?.id
-          );
-
-          if (res?.data) {
+          const res = await getRefreshAccessToken();
+          if (res) {
             // Save the new token in the cookie.
-            setCookie("token", JSON.stringify(res.data));
-            const newAccessToken = res.data.accessToken;
+            setCookie('token', JSON.stringify(res));
+            const newAccessToken = res.accessToken;
 
             // Update the authorization header with the new access token.
             instance.defaults.headers.common[
@@ -87,7 +64,7 @@ const axiosInstance = (serviceName?: string) => {
             );
           }
         } catch (err) {
-          if (axios.isAxiosError(err) && err.response?.status === 401) {
+          if (axios.isAxiosError(err) && (err.response?.status === 401 || err.response?.status === 500)) {
             removeCookie('token');
             window.location.href = '/auth/login';
           }

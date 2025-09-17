@@ -6,6 +6,7 @@ export const API_CONSTANTS = {
   registerDevice: '/auth/device',
   verifyOtp: '/auth/verify-otp',
   refreshToken: '/auth/refresh',
+  logout: '/auth/logout',
   getDashboardStats: '/admin/common/stats',
   searchChakkiList: (filters?: string, page?: number, limit?: number) =>
     createUrl('/admin/chakki', {

@@ -9,22 +9,13 @@ import {
 } from '../features/chakkis/types';
 import { IAddMerchantPayload } from '../features/merchants/types';
 import { getCookie } from '../utils/cookies';
-import { getLocalItem } from '../utils/localstorage';
 import { IUpdateEntityStatus } from '../utils/types';
 import { API_CONSTANTS } from './apiConstants';
 import axiosInstance from './axiosInstance';
 
-const getAccessToken = (key: string) => {
-  const accessToken = getLocalItem<{ accessToken: string }>(key)?.accessToken;
-  const token = {
-    Authorization: `Bearer ${accessToken}`,
-  };
-
-  return accessToken
-    ? {
-        headers: token,
-      }
-    : undefined;
+const getAccessToken = () => {
+  const accessToken = getCookie('token')?.accessToken;
+  return accessToken;
 };
 
 const getRefreshToken = () => {
@@ -36,19 +27,20 @@ const getRefreshToken = () => {
  * @param deviceId
  * @returns
  */
-export const getRefreshAccessToken = async (
-  deviceId: string,
-  identityId: string
-) => {
+export const getRefreshAccessToken = async () => {
   const res = await axios.post(
     `${process.env.NEXT_PUBLIC_API_URL}${API_CONSTANTS.refreshToken}`,
     {
-      deviceIdentifier: deviceId,
       refreshToken: getRefreshToken(),
-      identityId,
+      accessToken: getAccessToken(),
     }
   );
-  return res?.data?.response;
+  return res?.data?.data;
+};
+
+export const logout = async () => {
+  const res = await axiosInstance().post(API_CONSTANTS.logout);
+  return res?.data?.data;
 };
 
 export const registerDevice = async (payload: { identifier: string }) => {

@@ -68,10 +68,10 @@ const useHook = () => {
       formikProps.setSubmitting(false);
     },
   });
-  const handleLogin = () => {
+  const handleLogin = (otp: string) => {
     const payload = {
       otpId: values.otpId || '',
-      otp: values.otp,
+      otp,
       mode: 'email',
     };
     loginRequest(payload);

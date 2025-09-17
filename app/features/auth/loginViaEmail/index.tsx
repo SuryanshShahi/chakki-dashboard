@@ -46,7 +46,7 @@ const LoginViaEmail = () => {
             setOtp={(otp) => {
               setFieldValue('otp', otp);
               if (otp?.length === 6 && values.otpId) {
-                handleLogin();
+                handleLogin(otp);
               }
             }}
             errorMessage={errors.otp}
