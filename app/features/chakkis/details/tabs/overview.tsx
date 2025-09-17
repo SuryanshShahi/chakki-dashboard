@@ -31,7 +31,8 @@ export const ChakkiOverview = ({ data }: { data?: IChakkiDetails }) => {
           </div>
         </CardWrapper>
       )}
-      <CardWrapper className='col-span-2 space-y-2'>
+      {/* not ready for review */}
+      {/* <CardWrapper className='col-span-2 space-y-2'>
         <KeyValue label='Name' value={data?.name} />
         <KeyValue label='Code' value={data?.code} />
         <KeyValue
@@ -50,19 +51,19 @@ export const ChakkiOverview = ({ data }: { data?: IChakkiDetails }) => {
           label='External Store Links'
           value={data?.externalStoreLinks?.join(', ') || 'NA'}
         />
-      </CardWrapper>
+      </CardWrapper> */}
     </div>
   );
 };
 
-const KeyValue = ({ label, value }: { label: string; value: string }) => (
-  <>
-    <div className='space-y-[2px]'>
-      <div className='text-[12px]'>{label}</div>
-      <div className=''>{value}</div>
-    </div>
-  </>
-);
+// const KeyValue = ({ label, value }: { label: string; value: string }) => (
+//   <>
+//     <div className='space-y-[2px]'>
+//       <div className='text-[12px]'>{label}</div>
+//       <div className=''>{value}</div>
+//     </div>
+//   </>
+// );
 
 const ArrowLeft = ({ onClick }: { onClick?: () => void }) => (
   <div

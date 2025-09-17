@@ -9,7 +9,6 @@ export function useHook({ chakkiId }: { chakkiId: UUID }) {
       queryKey: ['chakkiDetails', chakkiId],
       queryFn: () => getChakkiDetails(chakkiId as UUID),
       enabled: !!chakkiId,
-      refetchOnMount: true,
     });
 
   return {
