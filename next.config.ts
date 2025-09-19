@@ -1,10 +1,8 @@
-import type { NextConfig } from "next";
-
 const nextConfig = {
-  output: "export", // Keep this for static export
+  // output: "export", // Keep this for static export
 
   // These are crucial for GitHub Pages
-  basePath: process.env.NODE_ENV === "production" ? "/chakki-dashboard" : "",
+  basePath: process.env.NODE_ENV === 'production' ? '/chakki-dashboard' : '',
   // assetPrefix:
   //   process.env.NODE_ENV === "production" ? "/chakki-dashboard/" : "",
 

@@ -1,22 +1,24 @@
-"use client";
-import { GlobalContext } from "@/app/contexts";
-import Button from "@/app/shared/buttons/Button";
-import CardWrapper from "@/app/shared/cards/CardWrapper";
-import Divider from "@/app/shared/Divider";
-import DownloadApp from "@/app/shared/DownloadApp";
-import Heading from "@/app/shared/Heading";
-import Img from "@/app/shared/Img";
-import ConfirmationModal from "@/app/shared/modal/ConfirmationModal";
-import UserCard from "@/app/shared/UserCard";
-import useWindowDimensions from "@/app/utils/hooks/useWindowDimension";
-import { drawerMenuItems } from "@/app/utils/static";
-import { SvgCross, SvgLogout } from "@/app/utils/svgs";
-import { tw } from "@/tailwind.config";
-import clsx from "clsx";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { Fragment, useContext, useState } from "react";
-import { IoIosArrowDown } from "react-icons/io";
+'use client';
+import { logout } from '@/app/apis/apis';
+import Button from '@/app/shared/buttons/Button';
+import CardWrapper from '@/app/shared/cards/CardWrapper';
+import Divider from '@/app/shared/Divider';
+import DownloadApp from '@/app/shared/DownloadApp';
+import Heading from '@/app/shared/heading/Heading';
+import Img from '@/app/shared/Img';
+import ConfirmationModal from '@/app/shared/modal/ConfirmationModal';
+import { showToast } from '@/app/shared/ToastMessage';
+import UserCard from '@/app/shared/UserCard';
+import useWindowDimensions from '@/app/utils/hooks/useWindowDimension';
+import { drawerMenuItems } from '@/app/utils/static';
+import { SvgCross, SvgLogout } from '@/app/utils/svgs';
+import { tw } from '@/tailwind.config';
+import { useMutation } from '@tanstack/react-query';
+import clsx from 'clsx';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { Fragment, useState } from 'react';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const SideBar = ({
   className,
@@ -27,11 +29,10 @@ const SideBar = ({
 }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const routes = pathname.split("/")?.splice(1);
-  const [isOpen, setIsOpen] = useState("");
+  const routes = pathname.split('/')?.splice(1);
+  const [isOpen, setIsOpen] = useState('');
 
   const { width } = useWindowDimensions();
-  const { setData } = useContext(GlobalContext);
 
   const drawerItems = drawerMenuItems();
   const checkIfMenuItems = () =>
@@ -45,6 +46,24 @@ const SideBar = ({
 
   const [showItems, setShowItems] = useState(checkIfMenuItems);
 
+  const { mutate: logoutRequest } = useMutation({
+    mutationFn: () => {
+      setIsOpen('LOADING');
+      return logout();
+    },
+    onSuccess: (res) => {},
+    onError: (err: any) => {
+      showToast({
+        type: 'error',
+        title: err?.response?.data?.message,
+      });
+    },
+    onSettled: () => {
+      router.push('/auth/login');
+      setIsOpen('');
+    },
+  });
+
   return (
     <>
       <CardWrapper
@@ -57,9 +76,9 @@ const SideBar = ({
           <Link href="/home" className="flex items-center gap-x-2">
             <Img
               height={32}
-              width={47}
+              width={32}
               alt=""
-              src="/images/appStore.png"
+              src="/images/logo.png"
               className="max-h-8"
               isLocal
             />
@@ -68,7 +87,7 @@ const SideBar = ({
               className="text-xl line-clamp-1"
               variant="primary"
             >
-              ChakkiWala
+              Chakkiwala
             </Heading>
           </Link>
           {Number(width) <= 1024 && (
@@ -168,7 +187,7 @@ const SideBar = ({
           <DownloadApp />
           <UserCard
             title={"You"}
-            subtitle="Employee"
+            subtitle="Admin"
             styleSubtitle="!text-xs !text-tertiary"
             showInitials
             className="px-6"
@@ -189,20 +208,17 @@ const SideBar = ({
         </div>
       </CardWrapper>
       <ConfirmationModal
-        title="Confirm Logout"
-        description="Are you sure you want to log out?"
-        onSubmit={() => {
-          setIsOpen("LOADING");
-          router.push("/auth/login");
-        }}
-        styleHeader="flex gap-x-4 !space-y-0"
-        rightBtnName="Yes, Logout"
-        leftBtnName="Back"
-        type="danger"
-        isOpen={isOpen === "LOGOUT_MODAL"}
-        size="md"
-        isLoading={isOpen === "LOADING"}
-        close={() => setIsOpen("")}
+        title='Confirm Logout'
+        description='Are you sure you want to log out?'
+        onSubmit={logoutRequest}
+        styleHeader='flex gap-x-4 !space-y-0'
+        rightBtnName='Yes, Logout'
+        leftBtnName='Back'
+        type='danger'
+        isOpen={isOpen === 'LOGOUT_MODAL'}
+        size='md'
+        isLoading={isOpen === 'LOADING'}
+        close={() => setIsOpen('')}
       />
     </>
   );
