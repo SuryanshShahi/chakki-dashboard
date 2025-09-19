@@ -64,6 +64,7 @@ export const AddMerchantModal = ({
         title: 'Merchant added successfully',
         type: 'success',
       });
+      resetForm()
       onAddMerchant?.({
         id: res?.id,
         name: values.name,

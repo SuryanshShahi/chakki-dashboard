@@ -1,4 +1,5 @@
 import { Accept } from 'react-dropzone';
+import { IAccessToken } from './types';
 
 export const extractText = (
   text: string,
@@ -6,7 +7,7 @@ export const extractText = (
   replaceWith?: string
 ) => text?.toLowerCase()?.replaceAll(replace || '_', replaceWith || ' ');
 
-export const decodeToken = (token: string) => {
+export const decodeToken = (token: string): IAccessToken | null => {
   try {
     return JSON.parse(window?.atob(token?.split('.')[1]));
   } catch (e) {
@@ -152,8 +153,10 @@ export const determineSearchType = (value: string) => {
 };
 
 export const getEncodedFilters = <T extends object>(filters: T) => {
-  if (typeof window === "undefined") {
-      return undefined;
+  if (typeof window === 'undefined') {
+    return undefined;
   }
-  return Object.values(filters).length ? window?.btoa(JSON.stringify(filters)) : undefined;
+  return Object.values(filters).length
+    ? window?.btoa(JSON.stringify(filters))
+    : undefined;
 };

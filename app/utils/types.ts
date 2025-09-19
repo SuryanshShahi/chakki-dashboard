@@ -68,3 +68,13 @@ export interface IDashboardStats {
 export interface IUpdateEntityStatus {
   status: string;
 }
+
+export interface IAccessToken {
+  identityId: UUID;
+  identifier: string;
+  role: 'admin' | 'salesperson';
+  roleTypeId: UUID;
+  sessionId: UUID;
+  iat: number;
+  exp: number;
+}
