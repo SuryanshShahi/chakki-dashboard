@@ -51,9 +51,7 @@ const SideBar = ({
       setIsOpen('LOADING');
       return logout();
     },
-    onSuccess: (res) => {
-      router.push('/auth/login');
-    },
+    onSuccess: (res) => {},
     onError: (err: any) => {
       showToast({
         type: 'error',
@@ -61,6 +59,7 @@ const SideBar = ({
       });
     },
     onSettled: () => {
+      router.push('/auth/login');
       setIsOpen('');
     },
   });
